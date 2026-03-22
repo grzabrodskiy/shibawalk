@@ -25,11 +25,13 @@ export function getAnimalEncounterState(
   const distanceToShiba = Math.abs(x - shibaX);
   const isApproaching = event.direction === 1 ? x < shibaX : x > shibaX;
   const isSniffing = event.type === 'dog' && event.speed <= 1;
+  const isDeparting = !isApproaching && !isSniffing;
   const facing = isSniffing ? (x > shibaX ? -1 : 1) : event.direction;
-  const showCallout =
-    event.type === 'cat'
-      ? isApproaching && distanceToShiba > 150 && distanceToShiba < 260
-      : isApproaching && distanceToShiba > 170 && distanceToShiba < 290;
+  const approachWindow =
+    event.type === 'cat' ? distanceToShiba > 150 && distanceToShiba < 260 : distanceToShiba > 170 && distanceToShiba < 290;
+  const departureWindow =
+    event.type === 'cat' ? distanceToShiba > 118 && distanceToShiba < 210 : distanceToShiba > 132 && distanceToShiba < 230;
+  const showCallout = (isApproaching && approachWindow) || (isDeparting && departureWindow);
 
   return {
     x,

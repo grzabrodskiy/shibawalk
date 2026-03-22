@@ -60,11 +60,11 @@
 - Mood outcomes include moving right fast, moving right slowly, stopping, moving left slowly, and moving left fast.
 - Random stubborn streak event that overrides normal mood and changes direction unpredictably.
 - Cat event that can run either direction and pulls shiba toward the cat's current position on screen, so she still chases it while it is in front of her.
-- Cats call out with a `MEOW!` bubble while still at a short distance so the bubble does not overlap the shiba.
+- Cats call out with a `MEOW!` bubble while still at a short distance on approach, and then again once they are moving away and slightly clear of the shiba.
 - Whenever the cat or dog callout appears, the shiba automatically yips back with an on-screen reaction bubble.
 - Rain event that biases shiba toward home.
 - Passing dog event that makes shiba want to stop, turns nose-to-nose on the visible front side of the shiba, waits there anchored to the ground for about two seconds, and then continues its own journey.
-- Passing dogs call out with a `BARK!` bubble while still approaching so the bubble does not overlap the shiba.
+- Passing dogs call out with a `BARK!` bubble while still approaching, and then bark again once they are departing and slightly away from the shiba.
 - Continuous pull mechanic where the player can apply leash force in either horizontal direction.
 - Pull force decays quickly while held and recovers while resting.
 - Treat mechanic with 5 starting treats.
@@ -102,6 +102,7 @@
 - A compact level tag and the full stat strip are rendered together in one top row inside the stage, offset away from the home marker so it stays visible.
 - Stats are rendered at the top inside the stage as compact overlays in that shared row.
 - In-stage overlay backgrounds are fully transparent so labels and stats do not block the scenery.
+- In-stage overlays are borderless so the labels float over the scene without visible framing.
 - All status and end-of-level messaging is shown in the lower message panel instead of inside the stage.
 - The lower status readout is rendered as minimal text with no background card, while action buttons and control instructions stay beneath the play area.
 - Action buttons are compact round icon buttons with hover text labels for mouse users.
@@ -115,6 +116,9 @@
 - GitHub Actions deploys every push to Vercel automatically.
 - Pushes to `main` deploy to production.
 - Pushes to other branches deploy preview builds.
+- Release keyword: whenever the user says `PUBLISH`, it means to commit the current work if needed, push the current branch to the GitHub remote, let the Vercel deployment run, verify the result, and report the live URL back.
+- For production release requests, `PUBLISH` should push the latest work to `main` so `https://miwa-walk.vercel.app` updates.
+- A `PUBLISH` request is not complete until the remote push succeeds and the Vercel deployment status has been checked.
 
 ## Near-Term Next Steps
 
