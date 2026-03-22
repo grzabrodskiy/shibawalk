@@ -109,7 +109,8 @@
 
 ## Deployment Requirements Implemented
 
-- The project is linked to a Vercel project named `shiba-walk`.
+- The project is linked to a Vercel project named `miwa-walk`.
+- The public production URL is `https://miwa-walk.vercel.app`.
 - GitHub repository secrets store the Vercel project ID, org ID, and CI deploy token.
 - GitHub Actions deploys every push to Vercel automatically.
 - Pushes to `main` deploy to production.
