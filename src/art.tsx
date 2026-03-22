@@ -6,6 +6,8 @@ interface CharacterArtProps {
   moving?: boolean;
   rainy?: boolean;
   stride?: string;
+  hasCoffeeCup?: boolean;
+  hasParcel?: boolean;
 }
 
 function directionalStyle(
@@ -24,6 +26,8 @@ export function WalkerArt({
   moving = true,
   rainy = false,
   stride = '0.72s',
+  hasCoffeeCup = false,
+  hasParcel = false,
 }: CharacterArtProps) {
   const coatId = useId();
   const scarfId = useId();
@@ -72,6 +76,25 @@ export function WalkerArt({
         <path d="M137 319H166C171 319 174 323 174 327V333H134V325C134 322 135 320 137 319Z" fill="#1f232c" />
       </g>
 
+      <g className="walker-arm walker-arm--back">
+        <path
+          d="M79 120C60 149 49 169 48 190C48 201 54 208 63 208C71 208 77 202 79 194C83 175 90 157 106 137L79 120Z"
+          fill={`url(#${coatId})`}
+        />
+        <path
+          d="M49 188C45 193 45 200 47 205C49 210 54 213 59 213C64 213 68 209 69 203C70 197 67 191 62 188C58 185 52 185 49 188Z"
+          fill={`url(#${skinId})`}
+        />
+        {hasCoffeeCup && (
+          <g className="walker-coffee">
+            <path d="M28 157C28 152 32 148 37 148H51C56 148 60 152 60 157V184C60 190 55 195 49 195H39C33 195 28 190 28 184V157Z" fill="#d7bea0" />
+            <path d="M36 143H53C57 143 60 146 60 150V152H29V150C29 146 32 143 36 143Z" fill="#f3ece2" />
+            <path d="M55 161C62 161 67 167 67 174C67 182 62 187 56 187" fill="none" stroke="#d7bea0" strokeWidth="5" strokeLinecap="round" />
+            <path d="M33 163H55" fill="none" stroke="#b87b42" strokeWidth="4" strokeLinecap="round" opacity="0.68" />
+          </g>
+        )}
+      </g>
+
       <g className="walker-body">
         <path
           d="M82 88C69 108 63 132 67 156L76 228C91 238 145 237 158 226L166 154C169 129 161 108 145 88H82Z"
@@ -102,33 +125,31 @@ export function WalkerArt({
           opacity="0.72"
         />
         <path d="M84 114H153L140 80H100L84 114Z" fill={`url(#${scarfId})`} />
-      </g>
-
-      <g className="walker-arm walker-arm--back">
-        <path
-          d="M71 126C54 152 46 171 46 192C46 202 53 209 63 209C71 209 77 202 78 194C81 175 88 157 102 138L71 126Z"
-          fill={`url(#${coatId})`}
-        />
-        <path
-          d="M47 188C43 193 42 200 44 205C46 210 51 213 56 213C61 213 65 209 66 204C67 198 64 191 59 188C55 185 50 185 47 188Z"
-          fill={`url(#${skinId})`}
-        />
+        {hasParcel && (
+          <g className="walker-parcel">
+            <rect x="62" y="150" width="46" height="34" rx="6" fill="#d8b07a" />
+            <rect x="64" y="154" width="42" height="30" rx="5" fill="#c79253" opacity="0.92" />
+            <path d="M85 150V184" fill="none" stroke="#9d6637" strokeWidth="5" strokeLinecap="round" opacity="0.8" />
+            <path d="M62 167H108" fill="none" stroke="#9d6637" strokeWidth="4" strokeLinecap="round" opacity="0.72" />
+            <path d="M62 150L85 137L108 150" fill="none" stroke="#e7c899" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" opacity="0.65" />
+          </g>
+        )}
       </g>
 
       <g className="walker-arm walker-arm--front">
         <path
-          d="M141 126C155 131 165 145 176 164C183 177 186 191 186 204C186 214 179 220 170 220C162 220 156 214 154 207L148 176L135 150L141 126Z"
+          d="M136 121C153 129 165 145 176 164C183 177 186 191 186 204C186 214 179 220 170 220C162 220 156 214 154 207L148 176L134 149L136 121Z"
           fill={`url(#${coatId})`}
         />
-        <path d="M157 206C159 214 166 219 173 219C182 219 188 212 188 204C188 200 187 196 186 192L157 206Z" fill={`url(#${skinId})`} />
+        <path d="M155 204C157 213 165 219 173 219C182 219 188 212 188 204C188 200 187 196 186 192L155 204Z" fill={`url(#${skinId})`} />
         <path d="M159 205C163 211 170 215 176 215" fill="none" stroke="#c68f74" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
       </g>
 
       <g className="walker-head">
         <path d="M84 46C84 23 101 12 117 12C136 12 149 26 149 45C149 63 136 79 117 79C99 79 84 65 84 46Z" fill={`url(#${skinId})`} />
         <path
-          d="M90 40C89 18 105 6 124 6C143 6 159 19 159 39C159 51 153 61 142 68C138 49 124 34 101 31L90 40Z"
-          fill="#4c372e"
+          d="M88 42C87 17 104 4 124 4C145 4 160 18 160 40C160 52 154 63 142 70C138 50 124 34 101 31C96 34 91 38 88 42Z"
+          fill="#a14f1e"
         />
         <path d="M103 56C106 59 111 61 117 61C123 61 128 59 130 56" fill="none" stroke="#a56c57" strokeWidth="4" strokeLinecap="round" />
         <circle cx="106" cy="46" r="3.8" fill="#2a2a2a" />

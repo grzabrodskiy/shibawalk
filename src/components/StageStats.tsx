@@ -1,9 +1,12 @@
+import type { LevelDefinition } from '../game';
+
 interface StageStatsProps {
+  level: LevelDefinition;
   pullReserve: number;
   treats: number;
   screamTimeLeft: number;
   progressPct: number;
-  distanceToPark: string;
+  distanceToGoal: string;
 }
 
 function HudCard({
@@ -31,17 +34,18 @@ function HudCard({
 }
 
 export function StageStats({
+  level,
   pullReserve,
   treats,
   screamTimeLeft,
   progressPct,
-  distanceToPark,
+  distanceToGoal,
 }: StageStatsProps) {
   return (
     <div className="stage-stats">
       <article className="hud-card stage-level">
-        <span className="hud-card__label">Level 1</span>
-        <strong>Home To Park</strong>
+        <span className="hud-card__label">Level {level.index}</span>
+        <strong>{level.title}</strong>
       </article>
 
       <HudCard
@@ -57,8 +61,8 @@ export function StageStats({
         meterWidth={`${Math.min(100, (treats / 10) * 100)}%`}
       />
       <HudCard
-        label="Park"
-        value={distanceToPark}
+        label={level.destinationLabel}
+        value={distanceToGoal}
         meterClassName="meter__fill--distance"
         meterWidth={`${progressPct}%`}
       />

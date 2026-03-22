@@ -68,8 +68,8 @@ export function StatusPanel({
         <button
           type="button"
           className={`action-button action-button--icon action-button--pull-home${pullDirection === -1 ? ' is-active' : ''}`}
-          aria-label="Pull left toward home"
-          title="Pull left toward home"
+          aria-label="Pull left"
+          title="Pull left"
           onPointerDown={(event) => handlePullPointer(event, -1)}
           onPointerUp={(event) => handlePullPointer(event, null)}
           onPointerCancel={(event) => handlePullPointer(event, null)}
@@ -88,8 +88,8 @@ export function StatusPanel({
         <button
           type="button"
           className={`action-button action-button--icon action-button--pull-park${pullDirection === 1 ? ' is-active' : ''}`}
-          aria-label="Pull right toward park"
-          title="Pull right toward park"
+          aria-label="Pull right"
+          title="Pull right"
           onPointerDown={(event) => handlePullPointer(event, 1)}
           onPointerUp={(event) => handlePullPointer(event, null)}
           onPointerCancel={(event) => handlePullPointer(event, null)}

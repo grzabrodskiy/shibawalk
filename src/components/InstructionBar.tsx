@@ -6,10 +6,10 @@ export function InstructionBar({ isBracing }: InstructionBarProps) {
   return (
     <div className="instruction-bar" aria-label="Controls">
       <span>
-        <strong>A</strong> or <strong>Left</strong> pull left toward home
+        <strong>A</strong> or <strong>Left</strong> pull left
       </span>
       <span>
-        <strong>D</strong>, <strong>Right</strong>, or <strong>Space</strong> pull right toward park
+        <strong>D</strong>, <strong>Right</strong>, or <strong>Space</strong> pull right
       </span>
       <span>
         <strong>S</strong> or <strong>Down</strong> brace

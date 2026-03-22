@@ -1,7 +1,13 @@
 import { CSSProperties, type RefObject, useMemo } from 'react';
 import { ShibaArt, WalkerArt } from '../art';
-import { PLAYER_SCREEN_RATIO, TREAT_VISUAL_DURATION, WORLD_PROPS } from '../game';
-import type { Direction, GameState, MoodSummary } from '../game';
+import {
+  LEVEL_LENGTH,
+  LEVEL_TWO_END,
+  PLAYER_SCREEN_RATIO,
+  TREAT_VISUAL_DURATION,
+  WORLD_PROPS,
+} from '../game';
+import type { Direction, GameState, LevelDefinition, MoodSummary } from '../game';
 import { EventActor, getAnimalEncounterState } from './EventActor';
 import { StageStats } from './StageStats';
 import { StatusPanel } from './StatusPanel';
@@ -9,6 +15,19 @@ import { WorldObject } from './WorldObject';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
+}
+
+function getGaitBand(speed: number) {
+  if (speed > 72) {
+    return 3;
+  }
+  if (speed > 48) {
+    return 2;
+  }
+  if (speed > 24) {
+    return 1;
+  }
+  return 0;
 }
 
 function resolveAnchorX(
@@ -27,7 +46,7 @@ function resolveAnchorY(localY: number, viewBoxHeight: number, renderHeight: num
   return renderHeight * (localY / viewBoxHeight);
 }
 
-const WALKER_LEASH_HAND = { x: 171, y: 208 };
+const WALKER_LEASH_HAND = { x: 182, y: 206 };
 const SHIBA_COLLAR_ANCHOR = { x: 132, y: 97 };
 const SHIBA_TREAT_TARGET = { x: 34, y: 90 };
 
@@ -40,8 +59,9 @@ interface GamePanelProps {
   pullReserve: number;
   treats: number;
   screamTimeLeft: number;
-  progressPct: number;
-  distanceToPark: string;
+  routeLevel: LevelDefinition;
+  levelProgressPct: number;
+  distanceToGoal: string;
   treatVisualTimeLeft: number;
   onPullStart: (direction: Direction) => void;
   onPullEnd: () => void;
@@ -62,8 +82,9 @@ export function GamePanel({
   pullReserve,
   treats,
   screamTimeLeft,
-  progressPct,
-  distanceToPark,
+  routeLevel,
+  levelProgressPct,
+  distanceToGoal,
   treatVisualTimeLeft,
   onPullStart,
   onPullEnd,
@@ -87,15 +108,22 @@ export function GamePanel({
   const shibaBottom = 94;
   const shibaLeft = shibaX - shibaWidth / 2;
   const shibaTop = stageHeight - shibaBottom - shibaHeight;
-  const visualSpeed = Math.min(Math.abs(game.velocity), 120);
-  const walkerStride = `${clamp(1.72 - visualSpeed / 420, 1.14, 1.72)}s`;
-  const shibaStride = `${clamp(1.58 - visualSpeed / 390, 1.06, 1.58)}s`;
+  const visualSpeed = Math.min(Math.abs(game.velocity), 88);
+  const gaitBand = getGaitBand(visualSpeed);
+  const walkerStride = ['2.18s', '1.98s', '1.84s', '1.7s'][gaitBand];
+  const shibaStride = ['2.02s', '1.84s', '1.7s', '1.56s'][gaitBand];
+  const walkerMoving = visualSpeed > 20;
+  const shibaMoving = visualSpeed > 18;
+  const hasCoffeeCup =
+    game.furthestProgress >= LEVEL_TWO_END && game.furthestProgress < LEVEL_LENGTH;
+  const hasParcel = game.furthestProgress >= LEVEL_LENGTH;
   const travelFacing = Math.abs(game.velocity) > 8 ? (game.velocity > 0 ? 1 : -1) : game.facing;
   const walkerFacing = travelFacing;
   const shibaFacing = travelFacing;
   const leashHandX =
     walkerLeft + resolveAnchorX(WALKER_LEASH_HAND.x, 210, walkerWidth, walkerFacing, 1);
   const leashHandY = walkerTop + resolveAnchorY(WALKER_LEASH_HAND.y, 360, walkerHeight);
+  const leashHandControlX = leashHandX + walkerFacing * 18;
   const leashDogX =
     shibaLeft + resolveAnchorX(SHIBA_COLLAR_ANCHOR.x, 280, shibaWidth, shibaFacing, -1);
   const leashDogY = shibaTop + resolveAnchorY(SHIBA_COLLAR_ANCHOR.y, 200, shibaHeight);
@@ -154,11 +182,12 @@ export function GamePanel({
         <div className="cloud cloud--3" />
 
         <StageStats
+          level={routeLevel}
           pullReserve={pullReserve}
           treats={treats}
           screamTimeLeft={screamTimeLeft}
-          progressPct={progressPct}
-          distanceToPark={distanceToPark}
+          progressPct={levelProgressPct}
+          distanceToGoal={distanceToGoal}
         />
 
         {visibleProps.map(({ prop, x, collected }) => (
@@ -181,7 +210,7 @@ export function GamePanel({
           aria-hidden="true"
         >
           <path
-            d={`M ${leashHandX} ${leashHandY} C ${leashHandX + 18} ${isPulling ? leashHandY - 10 : leashHandY + 14}, ${leashDogX - 28} ${isPulling ? leashDogY - 18 : leashDogY + 8}, ${leashDogX} ${leashDogY}`}
+            d={`M ${leashHandX} ${leashHandY} C ${leashHandControlX} ${isPulling ? leashHandY - 10 : leashHandY + 14}, ${leashDogX - 28} ${isPulling ? leashDogY - 18 : leashDogY + 8}, ${leashDogX} ${leashDogY}`}
             fill="none"
             stroke={isPulling ? '#cb6a2d' : '#6d513c'}
             strokeWidth="4.5"
@@ -204,16 +233,18 @@ export function GamePanel({
         <div className="character character--walker" style={{ left: `${playerX}px` }}>
           <WalkerArt
             facing={walkerFacing}
-            moving={Math.abs(game.velocity) > 16}
+            moving={walkerMoving}
             rainy={game.activeEvent?.type === 'rain'}
             stride={walkerStride}
+            hasCoffeeCup={hasCoffeeCup}
+            hasParcel={hasParcel}
           />
         </div>
 
         <div className="character character--shiba" style={{ left: `${shibaX}px` }}>
           <ShibaArt
             facing={shibaFacing}
-            moving={Math.abs(game.velocity) > 10 || game.activeEvent?.type === 'cat'}
+            moving={shibaMoving}
             rainy={game.activeEvent?.type === 'rain'}
             stride={shibaStride}
           />
@@ -226,10 +257,10 @@ export function GamePanel({
         )}
 
         <div className="stage-banner stage-banner--left">
-          <span>Home</span>
+          <span>{routeLevel.startLabel}</span>
         </div>
         <div className="stage-banner stage-banner--right">
-          <span>Park</span>
+          <span>{routeLevel.destinationLabel}</span>
         </div>
       </div>
 

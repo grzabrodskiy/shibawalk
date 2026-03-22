@@ -34,6 +34,22 @@
 .park__post,
 .park__arch,
 .park__path,
+.fountain__basin,
+.fountain__stem,
+.fountain__bowl,
+.fountain__jet,
+.cafe__body,
+.cafe__roof,
+.cafe__awning,
+.cafe__door,
+.cafe__window,
+.cafe__sign,
+.post-office__body,
+.post-office__roof,
+.post-office__door,
+.post-office__window,
+.post-office__sign,
+.post-office__mailbox,
 .treat__bag,
 .treat__label {
   position: absolute;
@@ -264,6 +280,194 @@
   bottom: 0;
   background: linear-gradient(180deg, rgba(239, 226, 196, 0.9), rgba(220, 199, 160, 0.95));
   clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+}
+
+.world-object--fountain {
+  width: 170px;
+  height: 150px;
+}
+
+.fountain__basin {
+  left: 29px;
+  bottom: 0;
+  border-radius: 50% 50% 18px 18px;
+}
+
+.fountain__basin--back {
+  width: 112px;
+  height: 38px;
+  bottom: 16px;
+  background: linear-gradient(180deg, #dbe8f1, #8aa4b8);
+}
+
+.fountain__basin--front {
+  width: 128px;
+  height: 44px;
+  background: linear-gradient(180deg, #bfd4e0, #7d95a8);
+  box-shadow: 0 10px 18px rgba(80, 100, 119, 0.14);
+}
+
+.fountain__stem {
+  width: 22px;
+  height: 56px;
+  left: 74px;
+  bottom: 28px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #a9bbc9, #72899d);
+}
+
+.fountain__bowl {
+  width: 68px;
+  height: 24px;
+  left: 51px;
+  bottom: 68px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #dae8f0, #94afc2);
+}
+
+.fountain__jet {
+  width: 48px;
+  height: 62px;
+  left: 61px;
+  bottom: 76px;
+  border-radius: 50%;
+  border: 4px solid rgba(208, 237, 255, 0.8);
+  border-bottom: 0;
+  opacity: 0.8;
+}
+
+.world-object--cafe {
+  width: 232px;
+  height: 198px;
+}
+
+.cafe__body {
+  inset: 48px 24px 0;
+  background: linear-gradient(180deg, #f6e1c0, #dfbc8e);
+  border-radius: 18px 18px 10px 10px;
+  box-shadow: inset 0 8px 0 rgba(255, 251, 241, 0.46);
+}
+
+.cafe__roof {
+  width: 184px;
+  height: 62px;
+  left: 24px;
+  top: 14px;
+  background: linear-gradient(180deg, #bf7041, #8c4726);
+  border-radius: 18px 18px 10px 10px;
+}
+
+.cafe__awning {
+  width: 170px;
+  height: 28px;
+  left: 31px;
+  top: 68px;
+  background:
+    repeating-linear-gradient(90deg, #f6f0e8 0 18px, #cb6a3d 18px 36px);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 6px 12px rgba(116, 67, 41, 0.12);
+}
+
+.cafe__door {
+  width: 38px;
+  height: 82px;
+  left: 97px;
+  bottom: 0;
+  background: linear-gradient(180deg, #8d6140, #5d3a28);
+  border-radius: 10px 10px 0 0;
+}
+
+.cafe__window {
+  width: 34px;
+  height: 34px;
+  top: 106px;
+  background: linear-gradient(180deg, #eef9ff, #9dc6dd);
+  border: 4px solid #90674a;
+  border-radius: 10px;
+}
+
+.cafe__window--left {
+  left: 48px;
+}
+
+.cafe__window--right {
+  right: 48px;
+}
+
+.cafe__sign {
+  width: 88px;
+  height: 22px;
+  left: 72px;
+  top: 28px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff3d9, #e5c070);
+  box-shadow: 0 5px 10px rgba(115, 86, 43, 0.14);
+}
+
+.world-object--postOffice {
+  width: 236px;
+  height: 206px;
+}
+
+.post-office__body {
+  inset: 46px 24px 0;
+  background: linear-gradient(180deg, #e2d8cf, #c0b2a4);
+  border-radius: 18px 18px 10px 10px;
+  box-shadow: inset 0 8px 0 rgba(255, 255, 255, 0.32);
+}
+
+.post-office__roof {
+  width: 186px;
+  height: 64px;
+  left: 25px;
+  top: 8px;
+  background: linear-gradient(180deg, #c1523b, #8f3827);
+  border-radius: 16px 16px 10px 10px;
+}
+
+.post-office__door {
+  width: 40px;
+  height: 84px;
+  left: 98px;
+  bottom: 0;
+  background: linear-gradient(180deg, #846a58, #574235);
+  border-radius: 10px 10px 0 0;
+}
+
+.post-office__window {
+  width: 34px;
+  height: 34px;
+  top: 104px;
+  background: linear-gradient(180deg, #eef7ff, #9abbd5);
+  border: 4px solid #84705d;
+  border-radius: 10px;
+}
+
+.post-office__window--left {
+  left: 50px;
+}
+
+.post-office__window--right {
+  right: 50px;
+}
+
+.post-office__sign {
+  width: 96px;
+  height: 24px;
+  left: 70px;
+  top: 30px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #f0d89c, #cfa851);
+  box-shadow: 0 5px 10px rgba(110, 84, 38, 0.16);
+}
+
+.post-office__mailbox {
+  width: 26px;
+  height: 34px;
+  left: 24px;
+  bottom: 6px;
+  border-radius: 12px 12px 8px 8px;
+  background: linear-gradient(180deg, #c95d43, #9e402b);
 }
 
 .world-object--treat {

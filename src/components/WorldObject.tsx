@@ -67,6 +67,37 @@ export function WorldObject({ prop, x, collected }: WorldObjectProps) {
           <span className="park__path" />
         </>
       )}
+      {prop.kind === 'fountain' && (
+        <>
+          <span className="fountain__basin fountain__basin--back" />
+          <span className="fountain__stem" />
+          <span className="fountain__bowl" />
+          <span className="fountain__jet" />
+          <span className="fountain__basin fountain__basin--front" />
+        </>
+      )}
+      {prop.kind === 'cafe' && (
+        <>
+          <span className="cafe__body" />
+          <span className="cafe__roof" />
+          <span className="cafe__awning" />
+          <span className="cafe__door" />
+          <span className="cafe__window cafe__window--left" />
+          <span className="cafe__window cafe__window--right" />
+          <span className="cafe__sign" />
+        </>
+      )}
+      {prop.kind === 'postOffice' && (
+        <>
+          <span className="post-office__body" />
+          <span className="post-office__roof" />
+          <span className="post-office__door" />
+          <span className="post-office__window post-office__window--left" />
+          <span className="post-office__window post-office__window--right" />
+          <span className="post-office__sign" />
+          <span className="post-office__mailbox" />
+        </>
+      )}
       {prop.kind === 'treat' && (
         <>
           <span className="treat__bag" />

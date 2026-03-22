@@ -22,6 +22,7 @@ export interface ActiveEvent {
 export interface GameState {
   elapsed: number;
   progress: number;
+  furthestProgress: number;
   velocity: number;
   facing: Direction;
   pullReserve: number;
@@ -37,10 +38,36 @@ export interface GameState {
   won: boolean;
 }
 
+export interface LevelDefinition {
+  id: 'level-1' | 'level-2' | 'level-3';
+  index: number;
+  title: string;
+  startLabel: string;
+  destinationLabel: string;
+  startProgress: number;
+  endProgress: number;
+}
+
+export interface RouteStatus {
+  level: LevelDefinition;
+  progressPct: number;
+  distanceToGoal: string;
+}
+
 export interface WorldProp {
   id: string;
   x: number;
-  kind: 'tree' | 'lamp' | 'bench' | 'flower' | 'home' | 'park' | 'treat';
+  kind:
+    | 'tree'
+    | 'lamp'
+    | 'bench'
+    | 'flower'
+    | 'home'
+    | 'park'
+    | 'treat'
+    | 'fountain'
+    | 'cafe'
+    | 'postOffice';
   lane?: 'front' | 'back';
 }
 

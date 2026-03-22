@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { GamePanel } from './components/GamePanel';
 import {
-  LEVEL_LENGTH,
   advanceGame,
   createInitialState,
-  formatDistanceToPark,
   getMoodSummary,
+  getRouteStatus,
   useScream,
   useTreat,
 } from './game';
@@ -82,7 +81,7 @@ export default function App() {
   }, [clearPullState, handleReset]);
 
   const moodSummary = getMoodSummary(game);
-  const progressPct = Math.round((game.progress / LEVEL_LENGTH) * 100);
+  const routeStatus = getRouteStatus(game.progress);
 
   return (
     <main className="app-shell">
@@ -95,8 +94,9 @@ export default function App() {
         pullReserve={game.pullReserve}
         treats={game.treats}
         screamTimeLeft={game.screamTimeLeft}
-        progressPct={progressPct}
-        distanceToPark={formatDistanceToPark(game.progress)}
+        routeLevel={routeStatus.level}
+        levelProgressPct={routeStatus.progressPct}
+        distanceToGoal={routeStatus.distanceToGoal}
         treatVisualTimeLeft={game.treatVisualTimeLeft}
         onPullStart={startTouchPull}
         onPullEnd={stopTouchPull}

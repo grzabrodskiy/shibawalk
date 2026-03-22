@@ -1,5 +1,12 @@
 import type { ActiveEvent, Direction, GameState, IntentProfile, MoodSummary } from './types';
-import { LEVEL_LENGTH, PLAYER_SCREEN_RATIO, WORLD_PROPS } from './world';
+import {
+  LEVEL_LENGTH,
+  LEVEL_ONE_END,
+  LEVEL_TWO_END,
+  PLAYER_SCREEN_RATIO,
+  WORLD_PROPS,
+  getLevelForProgress,
+} from './world';
 
 const MAX_PULL_RESERVE = 100;
 const PULL_DRAIN_PER_SECOND = 34;
@@ -17,7 +24,7 @@ const DOG_RELEASE_SPEED = 94;
 const BASE_MOODS: Array<IntentProfile & { weight: number }> = [
   {
     label: 'Confident trot',
-    description: 'She is feeling cooperative and happily pulls toward the park.',
+    description: 'She is feeling cooperative and happily pulls the walk forward.',
     direction: 1,
     speed: 58,
     weight: 34,
@@ -38,7 +45,7 @@ const BASE_MOODS: Array<IntentProfile & { weight: number }> = [
   },
   {
     label: 'Homesick glance',
-    description: 'She keeps looking behind, tempted to wander back toward home.',
+    description: 'She keeps looking behind, tempted to wander back the way she came.',
     direction: -1,
     speed: 32,
     weight: 12,
@@ -111,7 +118,7 @@ function createEvent(stageWidth: number): ActiveEvent {
     const travelDistance = stageWidth + 220;
     return {
       type: 'cat',
-      label: direction === 1 ? 'A cat darts ahead' : 'A cat bolts toward home',
+      label: direction === 1 ? 'A cat darts ahead' : 'A cat streaks back across the path',
       description: 'The shiba instantly decides the cat is the new plan.',
       timeLeft: travelDistance / speed + 0.2,
       direction,
@@ -125,7 +132,7 @@ function createEvent(stageWidth: number): ActiveEvent {
     return {
       type: 'rain',
       label: 'Rain starts',
-      description: 'The weather turns and she would much rather retreat to the front door.',
+      description: 'The weather turns and she would much rather retreat to familiar ground.',
       timeLeft: randomBetween(5.5, 7.5),
       direction: -1,
       speed: 0,
@@ -166,6 +173,7 @@ export function createInitialState(stageWidth = 960): GameState {
   return {
     elapsed: 0,
     progress: 0,
+    furthestProgress: 0,
     velocity: 0,
     facing: 1,
     pullReserve: MAX_PULL_RESERVE,
@@ -387,6 +395,7 @@ export function advanceGame(
   const velocity = prev.velocity + (targetVelocity - prev.velocity) * ease;
   const unclampedProgress = prev.progress + velocity * dt;
   const progress = clamp(unclampedProgress, 0, LEVEL_LENGTH);
+  const furthestProgress = Math.max(prev.furthestProgress, progress);
 
   const pickupResult = collectTreats(progress, prev.collectedTreats, prev.treats);
   const facing =
@@ -396,6 +405,7 @@ export function advanceGame(
   return {
     elapsed: prev.elapsed + dt,
     progress,
+    furthestProgress,
     velocity: won ? 0 : velocity,
     facing,
     pullReserve,
@@ -413,10 +423,12 @@ export function advanceGame(
 }
 
 export function getMoodSummary(state: GameState): MoodSummary {
+  const level = getLevelForProgress(state.progress);
+
   if (state.won) {
     return {
-      title: 'Park reached',
-      body: 'The leash relaxes, the walk opens up, and the first level is complete.',
+      title: 'Post office reached',
+      body: 'Coffee in hand, the walk finishes at the post office and the parcel is finally picked up.',
     };
   }
 
@@ -431,6 +443,20 @@ export function getMoodSummary(state: GameState): MoodSummary {
     return {
       title: 'Treat focus',
       body: 'She has locked onto the reward and is much more willing to move forward.',
+    };
+  }
+
+  if (level.index === 2 && state.progress < LEVEL_ONE_END + 180) {
+    return {
+      title: 'Level 2 begins',
+      body: 'The park slips behind you and the walk rolls straight on toward the cafe.',
+    };
+  }
+
+  if (level.index === 3 && state.progress < LEVEL_TWO_END + 180) {
+    return {
+      title: 'Level 3 begins',
+      body: 'You pass the cafe, pick up a coffee, and keep walking toward the post office.',
     };
   }
 

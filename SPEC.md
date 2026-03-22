@@ -3,7 +3,7 @@
 ## Product Direction
 
 - Game type: side-scrolling web game.
-- Level in scope: Level 1, from home to park.
+- Levels in scope: Level 1 from home to park, continuing seamlessly into Level 2 from park to cafe and Level 3 from cafe to post office.
 - Camera model: the character and shiba stay anchored near the start side of the screen while the world scrolls toward them.
 - Visual direction: colorful environment, polished presentation, and the most realistic-looking character art practical without external paid assets.
 - Layout rule: the playable area should take the vast majority of the screen.
@@ -29,13 +29,19 @@
 ### Core Scene
 
 - Full-screen leaning side-scroller stage with a fixed player anchor and moving world.
-- Home-to-park route with scenery props including house, lamps, benches, trees, flowers, treat bags, and a park gate.
+- A continuous route that starts at home, passes through the park gate, continues to the cafe, and then carries on to the post office.
+- Route scenery includes the house, lamps, benches, trees, flowers, treat bags, park gates, park fountains, the cafe endpoint, and the post office endpoint.
 - The first route is intentionally much longer than the initial prototype and now stretches across a fuller neighborhood walk.
 - Parallax-style background layers, moving road markings, and weather overlays.
 
 ### Characters
 
 - Custom SVG walker art.
+- The walker hair is tuned to a dark orange tone.
+- The walker hair silhouette is slightly extended so it cleanly covers the full top of the head without changing the overall hairstyle.
+- Walker arm pivots and sleeve overlap are tuned so the hands stay visually attached to the body through the walk cycle.
+- After passing the cafe, the walker visibly carries a coffee cup for the rest of the route.
+- After reaching the post office, the walker visibly carries a parcel.
 - Custom SVG shiba art with more realistic proportions and shading than placeholder shapes.
 - The shiba side profile keeps four visible legs rather than collapsing to a three-leg silhouette.
 - Custom event actor art for cats and passing dogs with more anatomical detail than the initial pass.
@@ -50,19 +56,20 @@
 - Both walker hands are explicitly rendered in the silhouette.
 - The leash is anchored to a visible walker hand and the shiba collar/neck rather than approximate free points.
 - The leash anchor uses fixed mirrored hand and collar landmarks so it stays attached across both facing directions.
+- The leash-holding arm stays steadier and the leash curve leaves the hand in the current facing direction so the line does not peel away from the visible hand during turns.
 - Cats and passing dogs travel on a slightly higher back lane and render behind the walker and shiba.
 - Basic motion loops for walking, tail movement, and running event actors.
 
 ### Level 1 Mechanics
 
 - Shiba default mood system with weighted tendencies.
-- Default behavior usually favors moving toward the park.
+- Default behavior usually favors moving toward the current destination.
 - Mood outcomes include moving right fast, moving right slowly, stopping, moving left slowly, and moving left fast.
 - Random stubborn streak event that overrides normal mood and changes direction unpredictably.
 - Cat event that can run either direction and pulls shiba toward the cat's current position on screen, so she still chases it while it is in front of her.
 - Cats call out with a `MEOW!` bubble while still at a short distance on approach, and then again once they are moving away and slightly clear of the shiba.
 - Whenever the cat or dog callout appears, the shiba automatically yips back with an on-screen reaction bubble.
-- Rain event that biases shiba toward home.
+- Rain event that biases shiba back toward familiar ground.
 - Passing dog event that makes shiba want to stop, turns nose-to-nose on the visible front side of the shiba, waits there anchored to the ground for about two seconds, and then continues its own journey.
 - Passing dogs call out with a `BARK!` bubble while still approaching, and then bark again once they are departing and slightly away from the shiba.
 - Continuous pull mechanic where the player can apply leash force in either horizontal direction.
@@ -71,8 +78,9 @@
 - Special action: `Shiba Scream`, which is visual-only and just shows an on-screen yip bubble without changing movement, events, or overall game state.
 - Treat pickups along the level that replenish treats.
 - Using a treat shows a visible treat toss from the walker toward the shiba.
-- Distance and progress tracking from home to park.
-- Win state at the park gate.
+- Distance and progress tracking update to the current destination for the active level.
+- The walk continues straight into Level 2 at the park and Level 3 at the cafe instead of resetting or cutting away.
+- Final win state is at the post office.
 
 ### Controls
 
@@ -82,25 +90,28 @@
 - Keyboard treat: `W`, `E`, or `Up Arrow`.
 - Keyboard scream: `Q`.
 - Keyboard restart: `R`.
-- On-screen pull controls are shown as left and right arrow buttons, with accessible labels for home and park direction.
-- The control copy explains that left points toward home and right points toward the park.
+- On-screen pull controls are shown as left and right arrow buttons with generic directional labels.
+- The control copy explains the horizontal pull directions without tying them to only one destination.
 
 ## Current Tuning
 
 - Pulling is strong enough to overcome normal resistance for short stretches.
 - Pull strength deteriorates as the force meter drains.
-- Treats temporarily increase willingness to move toward the park.
+- Treats temporarily increase willingness to move toward the current destination.
 - Random events spawn during the walk and can temporarily override or dampen normal movement.
 - Leg animation timing is intentionally slowed down so walking reads more natural and less frantic.
 - Walker and shiba gait timing uses a capped visual-speed mapping so sudden velocity spikes do not cause unnaturally fast leg motion.
+- Walker and shiba gait timing now snaps to a few slow visual gait bands instead of retiming every frame from raw velocity, which prevents occasional bursts of overly fast leg motion.
+- Walker and shiba only animate when they are actually moving relative to the ground; if ground motion drops below the idle threshold, their legs, body bob, and idle motion all pause together.
 - Cat events stay on screen long enough to fully run from one side of the play area to the other.
 - The old event legend chips were removed because they read as unclear debug-style labels instead of useful player-facing information.
 
 ## Layout Requirements Implemented
 
 - The playfield is the main visual focus.
-- A compact level tag and the full stat strip are rendered together in one top row inside the stage, offset away from the home marker so it stays visible.
+- A compact level tag and the full stat strip are rendered together in one top row inside the stage, offset away from the near-edge route marker so it stays visible.
 - Stats are rendered at the top inside the stage as compact overlays in that shared row.
+- The top HUD automatically switches between `Level 1 / Home To Park`, `Level 2 / Park To Cafe`, and `Level 3 / Cafe To Post Office`, and the destination stat tracks the active route goal.
 - In-stage overlay backgrounds are fully transparent so labels and stats do not block the scenery.
 - In-stage overlays are borderless so the labels float over the scene without visible framing.
 - All status and end-of-level messaging is shown in the lower message panel instead of inside the stage.

@@ -41,6 +41,10 @@
   transform-box: view-box;
 }
 
+.walker-arm {
+  transform-box: view-box;
+}
+
 .walker-leg--front,
 .walker-arm--back,
 .shiba-leg--front,
@@ -61,12 +65,25 @@
   transform-origin: center top;
 }
 
+.walker-art.is-moving .walker-arm--front {
+  animation: none;
+  transform: rotate(2deg) translateY(1px);
+}
+
 .walker-leg--back {
   transform-origin: 96px 186px;
 }
 
 .walker-leg--front {
   transform-origin: 126px 186px;
+}
+
+.walker-arm--back {
+  transform-origin: 82px 126px;
+}
+
+.walker-arm--front {
+  transform-origin: 138px 126px;
 }
 
 .walker-body,
@@ -83,7 +100,11 @@
 
 .walker-art:not(.is-moving) .walker-leg,
 .walker-art:not(.is-moving) .walker-arm,
+.walker-art:not(.is-moving) .walker-body,
 .shiba-art:not(.is-moving) .shiba-leg,
+.shiba-art:not(.is-moving) .shiba-body,
+.shiba-art:not(.is-moving) .shiba-head,
+.shiba-art:not(.is-moving) .shiba-tail,
 .cat-art:not(.is-moving) .cat-leg,
 .passing-dog-art:not(.is-moving) .dog-leg {
   animation-play-state: paused;
