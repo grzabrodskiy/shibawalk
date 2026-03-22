@@ -1,0 +1,215 @@
+.event-actor {
+  position: absolute;
+  width: 170px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.event-actor--dog {
+  width: 190px;
+}
+
+.character {
+  position: absolute;
+  bottom: 90px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.character--walker {
+  width: 220px;
+  bottom: 90px;
+}
+
+.character--shiba {
+  width: 250px;
+  bottom: 94px;
+}
+
+.walker-art,
+.shiba-art,
+.cat-art,
+.passing-dog-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.walker-leg {
+  transform-box: view-box;
+}
+
+.walker-leg--front,
+.walker-arm--back,
+.shiba-leg--front,
+.shiba-leg--rear,
+.cat-leg--front,
+.dog-leg--front {
+  animation: swing-front var(--stride, 0.72s) infinite ease-in-out;
+  transform-origin: center top;
+}
+
+.walker-leg--back,
+.walker-arm--front,
+.shiba-leg--back,
+.shiba-leg--middle,
+.cat-leg--back,
+.dog-leg--back {
+  animation: swing-back var(--stride, 0.72s) infinite ease-in-out;
+  transform-origin: center top;
+}
+
+.walker-leg--back {
+  transform-origin: 96px 186px;
+}
+
+.walker-leg--front {
+  transform-origin: 126px 186px;
+}
+
+.walker-body,
+.shiba-body,
+.shiba-head {
+  animation: bob var(--stride, 0.72s) infinite ease-in-out;
+  transform-origin: center;
+}
+
+.shiba-tail {
+  animation: wag 0.95s infinite ease-in-out;
+  transform-origin: 210px 88px;
+}
+
+.walker-art:not(.is-moving) .walker-leg,
+.walker-art:not(.is-moving) .walker-arm,
+.shiba-art:not(.is-moving) .shiba-leg,
+.cat-art:not(.is-moving) .cat-leg,
+.passing-dog-art:not(.is-moving) .dog-leg {
+  animation-play-state: paused;
+}
+
+.stage.is-raining .walker-art,
+.stage.is-raining .shiba-art {
+  filter: saturate(0.92) brightness(0.95);
+}
+
+.shiba-scream-bubble {
+  position: absolute;
+  transform: translateX(-50%) rotate(-5deg);
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: rgba(255, 248, 243, 0.9);
+  border: 2px solid rgba(189, 58, 48, 0.38);
+  color: #b43f34;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  box-shadow: 0 10px 22px rgba(88, 46, 30, 0.12);
+  pointer-events: none;
+  z-index: 12;
+}
+
+.event-callout {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 18px);
+  transform: translateX(-50%) rotate(-4deg);
+  padding: 6px 10px;
+  border-radius: 14px;
+  background: rgba(255, 250, 245, 0.94);
+  border: 1px solid rgba(121, 84, 61, 0.2);
+  color: #7d4d34;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  box-shadow: 0 8px 16px rgba(66, 40, 24, 0.08);
+  z-index: 6;
+}
+
+.event-callout--dog {
+  color: #5b4c42;
+}
+
+.treat-visual {
+  position: absolute;
+  width: 24px;
+  height: 16px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f1d58a, #c7913e);
+  border: 1px solid rgba(123, 85, 34, 0.34);
+  box-shadow: 0 8px 16px rgba(90, 55, 21, 0.16);
+  pointer-events: none;
+  z-index: 8;
+}
+
+.treat-visual::before,
+.treat-visual::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(120, 81, 28, 0.35);
+}
+
+.treat-visual::before {
+  left: 6px;
+}
+
+.treat-visual::after {
+  right: 6px;
+}
+
+.shiba-scream-bubble::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 14px;
+  height: 14px;
+  background: inherit;
+  border-right: 2px solid rgba(189, 58, 48, 0.38);
+  border-bottom: 2px solid rgba(189, 58, 48, 0.38);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes swing-front {
+  0%,
+  100% {
+    transform: rotate(7deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-8deg) translateY(1px);
+  }
+}
+
+@keyframes swing-back {
+  0%,
+  100% {
+    transform: rotate(-7deg) translateY(1px);
+  }
+  50% {
+    transform: rotate(8deg) translateY(0);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@keyframes wag {
+  0%,
+  100% {
+    transform: rotate(8deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+}

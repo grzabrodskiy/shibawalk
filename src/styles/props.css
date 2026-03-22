@@ -1,0 +1,291 @@
+.world-object {
+  position: absolute;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.world-object--back {
+  bottom: 142px;
+}
+
+.world-object--front {
+  bottom: 136px;
+}
+
+.world-object--tree {
+  width: 120px;
+  height: 180px;
+}
+
+.tree__canopy,
+.tree__trunk,
+.lamp__pole,
+.lamp__arm,
+.lamp__glow,
+.bench__seat,
+.bench__back,
+.bench__leg,
+.flower__stem,
+.flower__petal,
+.home__body,
+.home__roof,
+.home__door,
+.home__window,
+.park__post,
+.park__arch,
+.park__path,
+.treat__bag,
+.treat__label {
+  position: absolute;
+}
+
+.tree__canopy {
+  border-radius: 50%;
+}
+
+.tree__canopy--back {
+  width: 82px;
+  height: 82px;
+  left: 18px;
+  top: 24px;
+  background: #487052;
+}
+
+.tree__canopy--front {
+  width: 98px;
+  height: 98px;
+  left: 10px;
+  top: 6px;
+  background: radial-gradient(circle at 30% 30%, #6f9b66, #2f5d3f 72%);
+}
+
+.tree__trunk {
+  width: 22px;
+  height: 92px;
+  left: 48px;
+  bottom: 0;
+  background: linear-gradient(180deg, #876247, #67452d);
+  border-radius: 10px;
+}
+
+.world-object--lamp {
+  width: 54px;
+  height: 170px;
+}
+
+.lamp__pole {
+  width: 10px;
+  height: 126px;
+  left: 22px;
+  bottom: 0;
+  background: linear-gradient(180deg, #5b6167, #374149);
+  border-radius: 999px;
+}
+
+.lamp__arm {
+  width: 34px;
+  height: 8px;
+  left: 18px;
+  top: 28px;
+  background: #4f575e;
+  border-radius: 999px;
+}
+
+.lamp__glow {
+  width: 32px;
+  height: 32px;
+  left: 22px;
+  top: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 236, 179, 0.85) 0%, rgba(255, 215, 140, 0.52) 42%, rgba(255, 215, 140, 0) 72%);
+}
+
+.world-object--bench {
+  width: 102px;
+  height: 84px;
+}
+
+.bench__seat,
+.bench__back {
+  width: 82px;
+  left: 10px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #946740, #6d4728);
+}
+
+.bench__seat {
+  top: 42px;
+  height: 14px;
+}
+
+.bench__back {
+  top: 16px;
+  height: 16px;
+}
+
+.bench__leg {
+  width: 8px;
+  height: 36px;
+  top: 46px;
+  background: #433227;
+}
+
+.bench__leg--left {
+  left: 20px;
+}
+
+.bench__leg--right {
+  right: 20px;
+}
+
+.world-object--flower {
+  width: 28px;
+  height: 46px;
+}
+
+.flower__stem {
+  width: 4px;
+  height: 32px;
+  left: 12px;
+  bottom: 0;
+  background: #497a4b;
+}
+
+.flower__petal {
+  width: 12px;
+  height: 12px;
+  background: #e76b6a;
+  border-radius: 50%;
+  top: 6px;
+}
+
+.flower__petal--1 {
+  left: 8px;
+}
+
+.flower__petal--2 {
+  left: 0;
+  top: 12px;
+}
+
+.flower__petal--3 {
+  left: 16px;
+  top: 12px;
+}
+
+.flower__petal--4 {
+  left: 8px;
+  top: 18px;
+  background: #f9cf78;
+}
+
+.world-object--home {
+  width: 200px;
+  height: 180px;
+}
+
+.home__body {
+  inset: 40px 24px 0;
+  background: linear-gradient(180deg, #f3e2ca, #debea0);
+  border-radius: 18px 18px 8px 8px;
+  box-shadow: inset 0 8px 0 rgba(255, 255, 255, 0.42);
+}
+
+.home__roof {
+  width: 164px;
+  height: 74px;
+  left: 18px;
+  top: 0;
+  background: linear-gradient(180deg, #b6663a, #844224);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.home__door {
+  width: 34px;
+  height: 72px;
+  left: 83px;
+  bottom: 0;
+  background: linear-gradient(180deg, #87624a, #603f2d);
+  border-radius: 10px 10px 0 0;
+}
+
+.home__window {
+  width: 28px;
+  height: 28px;
+  top: 72px;
+  background: linear-gradient(180deg, #dff5ff, #9ec6df);
+  border: 4px solid #8a6547;
+  border-radius: 8px;
+}
+
+.home__window--left {
+  left: 44px;
+}
+
+.home__window--right {
+  right: 44px;
+}
+
+.world-object--park {
+  width: 220px;
+  height: 190px;
+}
+
+.park__post {
+  width: 18px;
+  height: 112px;
+  bottom: 0;
+  background: linear-gradient(180deg, #8a9473, #5d624c);
+  border-radius: 8px 8px 0 0;
+}
+
+.park__post--left {
+  left: 42px;
+}
+
+.park__post--right {
+  right: 42px;
+}
+
+.park__arch {
+  width: 140px;
+  height: 56px;
+  left: 40px;
+  top: 18px;
+  border: 12px solid #70815f;
+  border-bottom: 0;
+  border-radius: 90px 90px 0 0;
+}
+
+.park__path {
+  width: 110px;
+  height: 64px;
+  left: 55px;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(239, 226, 196, 0.9), rgba(220, 199, 160, 0.95));
+  clip-path: polygon(14% 0, 86% 0, 100% 100%, 0 100%);
+}
+
+.world-object--treat {
+  width: 54px;
+  height: 62px;
+}
+
+.treat__bag {
+  width: 34px;
+  height: 44px;
+  left: 10px;
+  bottom: 0;
+  background: linear-gradient(180deg, #f4d87d, #d8aa33);
+  border-radius: 8px 8px 12px 12px;
+  box-shadow: 0 6px 12px rgba(108, 78, 44, 0.18);
+}
+
+.treat__label {
+  width: 16px;
+  height: 16px;
+  left: 19px;
+  top: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff5d3, #d7883c 80%);
+}

@@ -1,0 +1,45 @@
+:root {
+  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  color: #1f1a15;
+  background:
+    radial-gradient(circle at top, rgba(255, 233, 186, 0.92), rgba(244, 219, 170, 0.58) 38%, rgba(237, 213, 179, 0.2) 62%, transparent 80%),
+    linear-gradient(180deg, #f0ceb0 0%, #f3ddbc 50%, #efe6d9 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  font-weight: 400;
+  --ink: #231a16;
+  --cream: #fff8ef;
+  --sand: #f6e2c1;
+  --clay: #d16d3b;
+  --clay-dark: #9f4a21;
+  --forest: #355b46;
+  --forest-deep: #214230;
+  --teal: #24495e;
+  --road: #7d746b;
+  --road-edge: #d0c7bb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
