@@ -107,6 +107,14 @@
 - Action buttons are compact round icon buttons with hover text labels for mouse users.
 - Mobile layout keeps the same split: stats inside the stage, controls and messaging below it.
 
+## Deployment Requirements Implemented
+
+- The project is linked to a Vercel project named `shiba-walk`.
+- GitHub repository secrets store the Vercel project ID, org ID, and CI deploy token.
+- GitHub Actions deploys every push to Vercel automatically.
+- Pushes to `main` deploy to production.
+- Pushes to other branches deploy preview builds.
+
 ## Near-Term Next Steps
 
 - Improve realism further with richer character illustration passes or frame-based sprite sheets.
