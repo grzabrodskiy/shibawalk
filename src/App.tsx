@@ -81,7 +81,7 @@ export default function App() {
   }, [clearPullState, handleReset]);
 
   const moodSummary = getMoodSummary(game);
-  const routeStatus = getRouteStatus(game.progress);
+  const routeStatus = getRouteStatus(game.progress, game.levels);
 
   return (
     <main className="app-shell">

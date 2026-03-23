@@ -1,11 +1,9 @@
 import type { ActiveEvent, Direction, GameState, IntentProfile, MoodSummary } from './types';
 import {
-  LEVEL_LENGTH,
-  LEVEL_ONE_END,
-  LEVEL_TWO_END,
   PLAYER_SCREEN_RATIO,
-  WORLD_PROPS,
+  createRoutePlan,
   getLevelForProgress,
+  getRouteLength,
 } from './world';
 
 const MAX_PULL_RESERVE = 100;
@@ -169,7 +167,9 @@ function createEvent(stageWidth: number): ActiveEvent {
   };
 }
 
-export function createInitialState(stageWidth = 960): GameState {
+export function createInitialState(_stageWidth = 960): GameState {
+  const route = createRoutePlan();
+
   return {
     elapsed: 0,
     progress: 0,
@@ -181,6 +181,8 @@ export function createInitialState(stageWidth = 960): GameState {
     treatBoost: 0,
     treatVisualTimeLeft: 0,
     collectedTreats: [],
+    levels: route.levels,
+    worldProps: route.worldProps,
     mood: pickBaseMood(),
     moodTimeLeft: randomBetween(2.1, 4.4),
     activeEvent: null,
@@ -214,11 +216,16 @@ export function useScream(state: GameState): GameState {
   };
 }
 
-function collectTreats(progress: number, collectedTreats: string[], treats: number) {
+function collectTreats(
+  progress: number,
+  worldProps: GameState['worldProps'],
+  collectedTreats: string[],
+  treats: number,
+) {
   const nextCollected = [...collectedTreats];
   let nextTreats = treats;
 
-  for (const prop of WORLD_PROPS) {
+  for (const prop of worldProps) {
     if (prop.kind !== 'treat' || nextCollected.includes(prop.id)) {
       continue;
     }
@@ -394,13 +401,19 @@ export function advanceGame(
   const ease = 1 - Math.exp(-dt * 5);
   const velocity = prev.velocity + (targetVelocity - prev.velocity) * ease;
   const unclampedProgress = prev.progress + velocity * dt;
-  const progress = clamp(unclampedProgress, 0, LEVEL_LENGTH);
+  const routeLength = getRouteLength(prev.levels);
+  const progress = clamp(unclampedProgress, 0, routeLength);
   const furthestProgress = Math.max(prev.furthestProgress, progress);
 
-  const pickupResult = collectTreats(progress, prev.collectedTreats, prev.treats);
+  const pickupResult = collectTreats(
+    progress,
+    prev.worldProps,
+    prev.collectedTreats,
+    prev.treats,
+  );
   const facing =
     targetVelocity > 12 ? 1 : targetVelocity < -12 ? -1 : prev.facing || 1;
-  const won = progress >= LEVEL_LENGTH;
+  const won = progress >= routeLength;
 
   return {
     elapsed: prev.elapsed + dt,
@@ -413,6 +426,8 @@ export function advanceGame(
     treatBoost,
     treatVisualTimeLeft,
     collectedTreats: pickupResult.collectedTreats,
+    levels: prev.levels,
+    worldProps: prev.worldProps,
     mood,
     moodTimeLeft,
     activeEvent,
@@ -423,12 +438,13 @@ export function advanceGame(
 }
 
 export function getMoodSummary(state: GameState): MoodSummary {
-  const level = getLevelForProgress(state.progress);
+  const level = getLevelForProgress(state.progress, state.levels);
+  const finalLevel = state.levels[state.levels.length - 1];
 
   if (state.won) {
     return {
-      title: 'Post office reached',
-      body: 'Coffee in hand, the walk finishes at the post office and the parcel is finally picked up.',
+      title: `${finalLevel.destinationLabel} reached`,
+      body: `The walk keeps rolling and finally settles in at the ${finalLevel.destinationLabel.toLowerCase()}.`,
     };
   }
 
@@ -446,17 +462,10 @@ export function getMoodSummary(state: GameState): MoodSummary {
     };
   }
 
-  if (level.index === 2 && state.progress < LEVEL_ONE_END + 180) {
+  if (level.index > 1 && state.progress < level.startProgress + 180) {
     return {
-      title: 'Level 2 begins',
-      body: 'The park slips behind you and the walk rolls straight on toward the cafe.',
-    };
-  }
-
-  if (level.index === 3 && state.progress < LEVEL_TWO_END + 180) {
-    return {
-      title: 'Level 3 begins',
-      body: 'You pass the cafe, pick up a coffee, and keep walking toward the post office.',
+      title: `Level ${level.index} begins`,
+      body: `${level.startLabel} slips behind you and the walk continues toward ${level.destinationLabel}.`,
     };
   }
 

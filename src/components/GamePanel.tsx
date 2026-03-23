@@ -1,11 +1,9 @@
 import { CSSProperties, type RefObject, useMemo } from 'react';
 import { ShibaArt, WalkerArt } from '../art';
 import {
-  LEVEL_LENGTH,
-  LEVEL_TWO_END,
   PLAYER_SCREEN_RATIO,
   TREAT_VISUAL_DURATION,
-  WORLD_PROPS,
+  getDestinationProgress,
 } from '../game';
 import type { Direction, GameState, LevelDefinition, MoodSummary } from '../game';
 import { EventActor, getAnimalEncounterState } from './EventActor';
@@ -114,9 +112,12 @@ export function GamePanel({
   const shibaStride = ['2.02s', '1.84s', '1.7s', '1.56s'][gaitBand];
   const walkerMoving = visualSpeed > 20;
   const shibaMoving = visualSpeed > 18;
+  const cafeProgress = getDestinationProgress(game.levels, 'cafe');
+  const postOfficeProgress = getDestinationProgress(game.levels, 'postOffice');
+  const hasParcel =
+    postOfficeProgress !== null && game.furthestProgress >= postOfficeProgress;
   const hasCoffeeCup =
-    game.furthestProgress >= LEVEL_TWO_END && game.furthestProgress < LEVEL_LENGTH;
-  const hasParcel = game.furthestProgress >= LEVEL_LENGTH;
+    !hasParcel && cafeProgress !== null && game.furthestProgress >= cafeProgress;
   const travelFacing = Math.abs(game.velocity) > 8 ? (game.velocity > 0 ? 1 : -1) : game.facing;
   const walkerFacing = travelFacing;
   const shibaFacing = travelFacing;
@@ -149,7 +150,7 @@ export function GamePanel({
 
   const visibleProps = useMemo(
     () =>
-      WORLD_PROPS.map((prop) => ({
+      game.worldProps.map((prop) => ({
         prop,
         x: playerX + (prop.x - game.progress) * worldScale,
         collected: game.collectedTreats.includes(prop.id),
@@ -160,7 +161,7 @@ export function GamePanel({
 
         return x > -200 && x < stageWidth + 220;
       }),
-    [game.collectedTreats, game.progress, playerX, stageWidth, worldScale],
+    [game.collectedTreats, game.progress, game.worldProps, playerX, stageWidth, worldScale],
   );
 
   return (

@@ -1,5 +1,12 @@
 export type Direction = -1 | 0 | 1;
 export type EventType = 'cat' | 'rain' | 'dog' | 'stubborn';
+export type DestinationKey =
+  | 'home'
+  | 'park'
+  | 'cafe'
+  | 'postOffice'
+  | 'restaurant'
+  | 'petStore';
 
 export interface IntentProfile {
   label: string;
@@ -30,6 +37,8 @@ export interface GameState {
   treatBoost: number;
   treatVisualTimeLeft: number;
   collectedTreats: string[];
+  levels: LevelDefinition[];
+  worldProps: WorldProp[];
   mood: IntentProfile;
   moodTimeLeft: number;
   activeEvent: ActiveEvent | null;
@@ -39,11 +48,13 @@ export interface GameState {
 }
 
 export interface LevelDefinition {
-  id: 'level-1' | 'level-2' | 'level-3';
+  id: `level-${number}`;
   index: number;
   title: string;
   startLabel: string;
   destinationLabel: string;
+  startKey: DestinationKey;
+  destinationKey: DestinationKey;
   startProgress: number;
   endProgress: number;
 }
@@ -67,7 +78,9 @@ export interface WorldProp {
     | 'treat'
     | 'fountain'
     | 'cafe'
-    | 'postOffice';
+    | 'postOffice'
+    | 'restaurant'
+    | 'petStore';
   lane?: 'front' | 'back';
 }
 

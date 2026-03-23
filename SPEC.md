@@ -3,7 +3,7 @@
 ## Product Direction
 
 - Game type: side-scrolling web game.
-- Levels in scope: Level 1 from home to park, continuing seamlessly into Level 2 from park to cafe and Level 3 from cafe to post office.
+- Levels in scope: a five-level continuous walk where Level 1 is always Home to Park, and the later destinations are randomized each run from Cafe, Post Office, Restaurant, and Pet Store.
 - Camera model: the character and shiba stay anchored near the start side of the screen while the world scrolls toward them.
 - Visual direction: colorful environment, polished presentation, and the most realistic-looking character art practical without external paid assets.
 - Layout rule: the playable area should take the vast majority of the screen.
@@ -29,8 +29,8 @@
 ### Core Scene
 
 - Full-screen leaning side-scroller stage with a fixed player anchor and moving world.
-- A continuous route that starts at home, passes through the park gate, continues to the cafe, and then carries on to the post office.
-- Route scenery includes the house, lamps, benches, trees, flowers, treat bags, park gates, park fountains, the cafe endpoint, and the post office endpoint.
+- A continuous route that starts at home, passes through the park gate, and then continues through a randomized order of neighborhood destinations.
+- Route scenery includes the house, lamps, benches, trees, flowers, treat bags, park gates, park fountains, the cafe endpoint, the post office endpoint, the restaurant endpoint, and the pet store endpoint.
 - The first route is intentionally much longer than the initial prototype and now stretches across a fuller neighborhood walk.
 - Parallax-style background layers, moving road markings, and weather overlays.
 
@@ -40,8 +40,8 @@
 - The walker hair is tuned to a dark orange tone.
 - The walker hair silhouette is slightly extended so it cleanly covers the full top of the head without changing the overall hairstyle.
 - Walker arm pivots and sleeve overlap are tuned so the hands stay visually attached to the body through the walk cycle.
-- After passing the cafe, the walker visibly carries a coffee cup for the rest of the route.
-- After reaching the post office, the walker visibly carries a parcel.
+- After passing the cafe, the walker visibly carries a coffee cup until the post office has been reached.
+- After reaching the post office, the walker visibly carries a parcel for the rest of the run.
 - Custom SVG shiba art with more realistic proportions and shading than placeholder shapes.
 - The shiba side profile keeps four visible legs rather than collapsing to a three-leg silhouette.
 - Custom event actor art for cats and passing dogs with more anatomical detail than the initial pass.
@@ -79,8 +79,9 @@
 - Treat pickups along the level that replenish treats.
 - Using a treat shows a visible treat toss from the walker toward the shiba.
 - Distance and progress tracking update to the current destination for the active level.
-- The walk continues straight into Level 2 at the park and Level 3 at the cafe instead of resetting or cutting away.
-- Final win state is at the post office.
+- The walk continues straight into the next randomized destination instead of resetting or cutting away.
+- The next destination after the park is randomized each run by shuffling the remaining destination pool.
+- Final win state is at whichever destination ends the current randomized route.
 
 ### Controls
 
@@ -111,7 +112,7 @@
 - The playfield is the main visual focus.
 - A compact level tag and the full stat strip are rendered together in one top row inside the stage, offset away from the near-edge route marker so it stays visible.
 - Stats are rendered at the top inside the stage as compact overlays in that shared row.
-- The top HUD automatically switches between `Level 1 / Home To Park`, `Level 2 / Park To Cafe`, and `Level 3 / Cafe To Post Office`, and the destination stat tracks the active route goal.
+- The top HUD automatically switches to the current route title for the active randomized level, and the destination stat tracks the active route goal.
 - In-stage overlay backgrounds are fully transparent so labels and stats do not block the scenery.
 - In-stage overlays are borderless so the labels float over the scene without visible framing.
 - All status and end-of-level messaging is shown in the lower message panel instead of inside the stage.

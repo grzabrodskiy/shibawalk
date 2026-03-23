@@ -98,6 +98,30 @@ export function WorldObject({ prop, x, collected }: WorldObjectProps) {
           <span className="post-office__mailbox" />
         </>
       )}
+      {prop.kind === 'restaurant' && (
+        <>
+          <span className="restaurant__body" />
+          <span className="restaurant__roof" />
+          <span className="restaurant__awning" />
+          <span className="restaurant__door" />
+          <span className="restaurant__window restaurant__window--left" />
+          <span className="restaurant__window restaurant__window--right" />
+          <span className="restaurant__sign" />
+          <span className="restaurant__table" />
+        </>
+      )}
+      {prop.kind === 'petStore' && (
+        <>
+          <span className="pet-store__body" />
+          <span className="pet-store__roof" />
+          <span className="pet-store__awning" />
+          <span className="pet-store__door" />
+          <span className="pet-store__window pet-store__window--left" />
+          <span className="pet-store__window pet-store__window--right" />
+          <span className="pet-store__sign" />
+          <span className="pet-store__bone" />
+        </>
+      )}
       {prop.kind === 'treat' && (
         <>
           <span className="treat__bag" />

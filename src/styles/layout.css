@@ -154,9 +154,9 @@
   top: 14px;
   left: 132px;
   z-index: 10;
-  width: min(820px, calc(100% - 148px));
+  width: min(880px, calc(100% - 148px));
   display: grid;
-  grid-template-columns: minmax(172px, 212px) repeat(4, minmax(0, 1fr));
+  grid-template-columns: minmax(196px, 240px) repeat(4, minmax(0, 1fr));
   gap: 8px;
   pointer-events: none;
 }
@@ -390,8 +390,8 @@
 @media (max-width: 1080px) {
   .stage-stats {
     left: 120px;
-    width: min(720px, calc(100% - 134px));
-    grid-template-columns: minmax(136px, 164px) repeat(4, minmax(0, 1fr));
+    width: min(780px, calc(100% - 134px));
+    grid-template-columns: minmax(156px, 192px) repeat(4, minmax(0, 1fr));
   }
 
   .stage-overlay__top {
@@ -421,7 +421,7 @@
     top: 12px;
     left: 92px;
     width: calc(100% - 104px);
-    grid-template-columns: minmax(118px, 142px) repeat(4, minmax(0, 1fr));
+    grid-template-columns: minmax(126px, 156px) repeat(4, minmax(0, 1fr));
     gap: 6px;
   }
 
