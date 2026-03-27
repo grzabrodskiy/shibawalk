@@ -11,6 +11,9 @@ interface StatusPanelProps {
   onPullEnd: () => void;
   onTreat: () => void;
   onScream: () => void;
+  onSpawnCat: () => void;
+  onSpawnDog: () => void;
+  onSpawnBigDog: () => void;
   onReset: () => void;
 }
 
@@ -41,6 +44,9 @@ export function StatusPanel({
   onPullEnd,
   onTreat,
   onScream,
+  onSpawnCat,
+  onSpawnDog,
+  onSpawnBigDog,
   onReset,
 }: StatusPanelProps) {
   const handlePullPointer = (
@@ -135,6 +141,33 @@ export function StatusPanel({
               </>
             }
           />
+        </button>
+        <button
+          type="button"
+          className="action-button action-button--debug-cat"
+          aria-label="Spawn cat event"
+          title="Spawn cat event"
+          onClick={onSpawnCat}
+        >
+          Cat
+        </button>
+        <button
+          type="button"
+          className="action-button action-button--debug-dog"
+          aria-label="Spawn dog event"
+          title="Spawn dog event"
+          onClick={onSpawnDog}
+        >
+          Dog
+        </button>
+        <button
+          type="button"
+          className="action-button action-button--debug-dog"
+          aria-label="Spawn big dog event"
+          title="Spawn big dog event"
+          onClick={onSpawnBigDog}
+        >
+          Big Dog
         </button>
         <button
           type="button"

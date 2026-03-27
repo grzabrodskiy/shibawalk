@@ -1,13 +1,31 @@
 .event-actor {
+  --stride: 0.84s;
   position: absolute;
-  width: 170px;
+  width: 182px;
   transform: translateX(-50%);
   pointer-events: none;
   z-index: 2;
 }
 
 .event-actor--dog {
-  width: 190px;
+  width: 222px;
+}
+
+.event-actor--bigDog {
+  width: 404px;
+}
+
+.event-actor__shell {
+  transform-origin: center bottom;
+  filter: drop-shadow(0 16px 14px rgba(36, 24, 18, 0.14));
+}
+
+.event-actor.is-moving .event-actor__shell {
+  animation: bob var(--stride, 0.84s) infinite ease-in-out;
+}
+
+.event-actor.is-sniffing .event-actor__shell {
+  transform: translateY(8px);
 }
 
 .character {
@@ -31,10 +49,21 @@
 .walker-art,
 .shiba-art,
 .cat-art,
-.passing-dog-art {
+.passing-dog-art,
+.big-dog-handler-art {
   display: block;
   width: 100%;
+}
+
+.walker-art,
+.cat-art,
+.passing-dog-art,
+.big-dog-handler-art {
   height: auto;
+}
+
+.big-dog-handler-art {
+  overflow: visible;
 }
 
 .walker-leg {
@@ -42,6 +71,10 @@
 }
 
 .walker-arm {
+  transform-box: view-box;
+}
+
+.walker-head {
   transform-box: view-box;
 }
 
@@ -87,24 +120,15 @@
 }
 
 .walker-body,
-.shiba-body,
-.shiba-head {
+.walker-head {
   animation: bob var(--stride, 0.72s) infinite ease-in-out;
   transform-origin: center;
 }
 
-.shiba-tail {
-  animation: wag 0.95s infinite ease-in-out;
-  transform-origin: 210px 88px;
-}
-
 .walker-art:not(.is-moving) .walker-leg,
 .walker-art:not(.is-moving) .walker-arm,
+.walker-art:not(.is-moving) .walker-head,
 .walker-art:not(.is-moving) .walker-body,
-.shiba-art:not(.is-moving) .shiba-leg,
-.shiba-art:not(.is-moving) .shiba-body,
-.shiba-art:not(.is-moving) .shiba-head,
-.shiba-art:not(.is-moving) .shiba-tail,
 .cat-art:not(.is-moving) .cat-leg,
 .passing-dog-art:not(.is-moving) .dog-leg {
   animation-play-state: paused;
@@ -115,9 +139,250 @@
   filter: saturate(0.92) brightness(0.95);
 }
 
+.cat-tail,
+.cat-body,
+.cat-head,
+.dog-tail,
+.dog-body,
+.dog-head {
+  transform-box: view-box;
+}
+
+.cat-art.is-moving .cat-tail {
+  animation: wag calc(var(--stride, 0.45s) * 1.15) infinite ease-in-out;
+  transform-origin: 212px 84px;
+}
+
+.cat-art.is-moving .cat-leg--front {
+  animation: cat-swing-front var(--stride, 0.45s) infinite ease-in-out;
+}
+
+.cat-art.is-moving .cat-leg--back {
+  animation: cat-swing-back var(--stride, 0.45s) infinite ease-in-out;
+}
+
+.passing-dog-art.is-moving .dog-tail {
+  animation: wag calc(var(--stride, 0.7s) * 1.05) infinite ease-in-out;
+  transform-origin: 254px 114px;
+}
+
+.big-dog-encounter .passing-dog-art.is-moving .dog-tail {
+  animation: wag calc(var(--stride, 0.96s) * 1.08) infinite ease-in-out;
+  transform-origin: 254px 114px;
+}
+
+.passing-dog-art.is-sniffing .dog-head {
+  transform: translate(-2px, 8px) rotate(7deg);
+  transform-origin: 146px 88px;
+}
+
+.passing-dog-art.is-sniffing .dog-body {
+  transform: translateY(2px);
+}
+
+.passing-dog-art.is-sniffing .dog-tail {
+  transform: rotate(-4deg) translate(2px, 3px);
+  transform-origin: 254px 114px;
+}
+
+.big-dog-encounter .passing-dog-art.is-moving .dog-leg--front {
+  animation: swing-front var(--stride, 0.96s) infinite ease-in-out;
+}
+
+.big-dog-encounter .passing-dog-art.is-moving .dog-leg--back {
+  animation: swing-back var(--stride, 0.96s) infinite ease-in-out;
+}
+
+.big-dog-encounter {
+  position: relative;
+  width: 404px;
+  height: 246px;
+  transform-origin: center bottom;
+}
+
+.big-dog-encounter.is-facing-right {
+  transform: scaleX(-1);
+}
+
+.big-dog-encounter__dog {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 314px;
+}
+
+.big-dog-encounter__person {
+  position: absolute;
+  right: 4px;
+  bottom: 0;
+  width: 150px;
+}
+
+.big-dog-encounter__leash {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.big-dog-handler__leg,
+.big-dog-handler__arm,
+.big-dog-handler__body,
+.big-dog-handler__head {
+  transform-box: view-box;
+}
+
+.big-dog-handler__leg--front,
+.big-dog-handler__arm--back {
+  animation: swing-front var(--stride, 0.96s) infinite ease-in-out;
+}
+
+.big-dog-handler__leg--back {
+  animation: swing-back var(--stride, 0.96s) infinite ease-in-out;
+}
+
+.big-dog-handler__body,
+.big-dog-handler__head {
+  animation: bob var(--stride, 0.96s) infinite ease-in-out;
+}
+
+.big-dog-handler-art.is-moving .big-dog-handler__arm--lead {
+  animation: big-dog-handler-lead-arm var(--stride, 0.96s) infinite ease-in-out;
+}
+
+.big-dog-handler__leg--back {
+  transform-origin: 88px 120px;
+}
+
+.big-dog-handler__leg--front {
+  transform-origin: 114px 120px;
+}
+
+.big-dog-handler__arm--back {
+  transform-origin: 96px 78px;
+}
+
+.big-dog-handler__arm--lead {
+  transform-origin: 132px 78px;
+}
+
+.big-dog-handler__body {
+  transform-origin: 114px 94px;
+}
+
+.big-dog-handler__head {
+  transform-origin: 118px 22px;
+}
+
+.shiba-art--sprite {
+  height: auto;
+  overflow: visible;
+  transform-origin: center bottom;
+}
+
+.shiba-art__shadow {
+  fill: rgba(29, 22, 17, 0.14);
+  filter: blur(3px);
+}
+
+.shiba-art__tail,
+.shiba-art__rear-leg,
+.shiba-art__body,
+.shiba-art__head,
+.shiba-art__front-leg,
+.shiba-art__collar,
+.shiba-art__ring {
+  transform-box: view-box;
+  filter: drop-shadow(0 16px 14px rgba(34, 22, 16, 0.12));
+}
+
+.shiba-art__tail {
+  transform-origin: 252px 118px;
+}
+
+.shiba-art__rear-leg {
+  transform-origin: 210px 140px;
+}
+
+.shiba-art__body {
+  transform-origin: 172px 132px;
+}
+
+.shiba-art__head {
+  transform-origin: 110px 104px;
+}
+
+.shiba-art__front-leg {
+  transform-origin: 160px 140px;
+}
+
+.shiba-art__collar,
+.shiba-art__ring {
+  transform-origin: 122px 110px;
+}
+
+.shiba-art.is-moving .shiba-art__shadow {
+  animation: shiba-shadow-shift var(--stride, 1.7s) infinite ease-in-out;
+}
+
+.shiba-art.is-moving .shiba-art__body,
+.shiba-art.is-moving .shiba-art__head {
+  animation: shiba-sprite-bob var(--stride, 1.7s) infinite ease-in-out;
+}
+
+.shiba-art.is-moving .shiba-art__tail {
+  animation: shiba-tail-sway calc(var(--stride, 1.7s) * 0.72) infinite ease-in-out;
+}
+
+.shiba-art.is-moving .shiba-art__collar,
+.shiba-art.is-moving .shiba-art__ring {
+  animation: shiba-sprite-bob var(--stride, 1.7s) infinite ease-in-out;
+}
+
+.shiba-art.is-moving .shiba-art__front-leg {
+  animation: shiba-step-front var(--stride, 1.7s) infinite ease-in-out;
+}
+
+.shiba-art.is-moving .shiba-art__rear-leg {
+  animation: shiba-step-back var(--stride, 1.7s) infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__shadow {
+  animation: shiba-stubborn-shadow 1.18s infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__body {
+  animation: shiba-stubborn-body 1.18s infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__head {
+  animation: shiba-stubborn-head 1.18s infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__collar,
+.shiba-art.is-pull-back .shiba-art__ring {
+  animation: shiba-stubborn-collar 1.18s infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__front-leg {
+  animation: shiba-stubborn-front-leg 1.18s infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__rear-leg {
+  animation: shiba-stubborn-rear-leg 1.18s infinite ease-in-out;
+}
+
+.shiba-art.is-pull-back .shiba-art__tail {
+  animation: shiba-stubborn-tail 1.38s infinite ease-in-out;
+}
+
 .shiba-scream-bubble {
   position: absolute;
-  transform: translateX(-50%) rotate(-5deg);
+  margin-top: -10px;
+  transform: translate(-50%, -100%) rotate(-5deg);
+  transform-origin: center bottom;
   padding: 8px 12px;
   border-radius: 16px;
   background: rgba(255, 248, 243, 0.9);
@@ -149,6 +414,23 @@
 
 .event-callout--dog {
   color: #5b4c42;
+}
+
+.event-callout--big-dog {
+  color: #5b4740;
+}
+
+.event-callout--person {
+  color: #5b4f43;
+  border-color: rgba(99, 88, 75, 0.24);
+}
+
+.event-callout--big-dog-dog {
+  bottom: calc(100% + 12px);
+}
+
+.event-callout--big-dog-person {
+  bottom: calc(100% + 52px);
 }
 
 .treat-visual {
@@ -225,6 +507,26 @@
   }
 }
 
+@keyframes cat-swing-front {
+  0%,
+  100% {
+    transform: rotate(3.5deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-4deg) translateY(0.5px);
+  }
+}
+
+@keyframes cat-swing-back {
+  0%,
+  100% {
+    transform: rotate(-3.5deg) translateY(0.5px);
+  }
+  50% {
+    transform: rotate(4deg) translateY(0);
+  }
+}
+
 @keyframes wag {
   0%,
   100% {
@@ -232,5 +534,139 @@
   }
   50% {
     transform: rotate(-10deg);
+  }
+}
+
+@keyframes shiba-sprite-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(2px) rotate(-0.8deg);
+  }
+}
+
+@keyframes shiba-shadow-shift {
+  0%,
+  100% {
+    transform: scaleX(1) scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.96) scaleY(1.04);
+    opacity: 0.9;
+  }
+}
+
+@keyframes shiba-tail-sway {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-6deg) translateY(1px);
+  }
+}
+
+@keyframes shiba-step-front {
+  0%,
+  100% {
+    transform: rotate(3deg) translate(0, 0);
+  }
+  50% {
+    transform: rotate(-7deg) translate(-1px, 3px);
+  }
+}
+
+@keyframes shiba-step-back {
+  0%,
+  100% {
+    transform: rotate(-3deg) translate(0, 1px);
+  }
+  50% {
+    transform: rotate(7deg) translate(2px, 0);
+  }
+}
+
+@keyframes shiba-stubborn-shadow {
+  0%,
+  100% {
+    transform: translate(10px, 0) scaleX(1.04) scaleY(1.02);
+    opacity: 0.96;
+  }
+  50% {
+    transform: translate(14px, 1px) scaleX(1.09) scaleY(1.04);
+    opacity: 0.88;
+  }
+}
+
+@keyframes shiba-stubborn-body {
+  0%,
+  100% {
+    transform: translate(18px, 11px) rotate(11deg);
+  }
+  50% {
+    transform: translate(16px, 13px) rotate(14deg);
+  }
+}
+
+@keyframes shiba-stubborn-head {
+  0%,
+  100% {
+    transform: translate(23px, 13px) rotate(18deg);
+  }
+  50% {
+    transform: translate(20px, 16px) rotate(22deg);
+  }
+}
+
+@keyframes shiba-stubborn-collar {
+  0%,
+  100% {
+    transform: translate(19px, 11px) rotate(11deg);
+  }
+  50% {
+    transform: translate(17px, 13px) rotate(14deg);
+  }
+}
+
+@keyframes shiba-stubborn-front-leg {
+  0%,
+  100% {
+    transform: translate(9px, 6px) rotate(16deg);
+  }
+  50% {
+    transform: translate(7px, 7px) rotate(20deg);
+  }
+}
+
+@keyframes shiba-stubborn-rear-leg {
+  0%,
+  100% {
+    transform: translate(23px, 2px) rotate(-12deg);
+  }
+  50% {
+    transform: translate(20px, 4px) rotate(-17deg);
+  }
+}
+
+@keyframes shiba-stubborn-tail {
+  0%,
+  100% {
+    transform: translate(12px, 5px) rotate(12deg);
+  }
+  50% {
+    transform: translate(16px, 7px) rotate(18deg);
+  }
+}
+
+@keyframes big-dog-handler-lead-arm {
+  0%,
+  100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-12deg) translate(1px, 1px);
   }
 }

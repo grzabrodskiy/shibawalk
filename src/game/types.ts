@@ -1,5 +1,17 @@
 export type Direction = -1 | 0 | 1;
-export type EventType = 'cat' | 'rain' | 'dog' | 'stubborn';
+export type EventType = 'cat' | 'rain' | 'dog' | 'bigDog' | 'stubborn';
+export type CatCoat = 'classic' | 'orangeTabby' | 'white';
+export type DogCoat =
+  | 'sand'
+  | 'charcoal'
+  | 'cream'
+  | 'shepherd'
+  | 'blackTan'
+  | 'mahogany';
+export type OwnerOutfit = 'slate' | 'forest' | 'mustard' | 'berry';
+export type OwnerHaircut = 'bob' | 'wavy' | 'pixie' | 'ponytail';
+export type OwnerHeadwear = 'none' | 'beanie' | 'baseballCap' | 'beret' | 'topHat';
+export type CarriedItem = 'flowers' | 'coffee' | 'parcel' | 'takeout' | 'petBag';
 export type DestinationKey =
   | 'home'
   | 'park'
@@ -17,6 +29,14 @@ export interface IntentProfile {
 
 export interface ActiveEvent {
   type: EventType;
+  catCoat?: CatCoat;
+  dogCoat?: DogCoat;
+  ownerOutfit?: OwnerOutfit;
+  ownerHaircut?: OwnerHaircut;
+  ownerHeadwear?: OwnerHeadwear;
+  shibaCallout?: string;
+  animalCallout?: string;
+  personCallout?: string;
   label: string;
   description: string;
   timeLeft: number;
@@ -31,6 +51,9 @@ export interface GameState {
   progress: number;
   furthestProgress: number;
   velocity: number;
+  walkerStridePhase: number;
+  shibaStridePhase: number;
+  animalStridePhase: number;
   facing: Direction;
   pullReserve: number;
   treats: number;
@@ -44,6 +67,8 @@ export interface GameState {
   activeEvent: ActiveEvent | null;
   nextEventIn: number;
   screamTimeLeft: number;
+  lastCompletedLevelIndex: number;
+  levelCompleteTimeLeft: number;
   won: boolean;
 }
 

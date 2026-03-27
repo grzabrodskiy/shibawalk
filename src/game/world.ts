@@ -1,4 +1,10 @@
-import type { DestinationKey, LevelDefinition, RouteStatus, WorldProp } from './types';
+import type {
+  CarriedItem,
+  DestinationKey,
+  LevelDefinition,
+  RouteStatus,
+  WorldProp,
+} from './types';
 
 export const PLAYER_SCREEN_RATIO = 0.24;
 
@@ -248,4 +254,38 @@ export function getDestinationProgress(
   destinationKey: DestinationKey,
 ) {
   return levels.find((level) => level.destinationKey === destinationKey)?.endProgress ?? null;
+}
+
+export function getCompletedLevelIndex(progress: number, levels: LevelDefinition[]) {
+  let completedLevelIndex = 0;
+
+  for (const level of levels) {
+    if (progress < level.endProgress) {
+      break;
+    }
+
+    completedLevelIndex = level.index;
+  }
+
+  return completedLevelIndex;
+}
+
+export function getCarriedItemForDestination(
+  destinationKey: DestinationKey | null | undefined,
+): CarriedItem | null {
+  switch (destinationKey) {
+    case 'park':
+      return 'flowers';
+    case 'cafe':
+      return 'coffee';
+    case 'postOffice':
+      return 'parcel';
+    case 'restaurant':
+      return 'takeout';
+    case 'petStore':
+      return 'petBag';
+    case 'home':
+    default:
+      return null;
+  }
 }

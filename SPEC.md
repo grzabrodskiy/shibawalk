@@ -6,16 +6,18 @@
 - Levels in scope: a five-level continuous walk where Level 1 is always Home to Park, and the later destinations are randomized each run from Cafe, Post Office, Restaurant, and Pet Store.
 - Camera model: the character and shiba stay anchored near the start side of the screen while the world scrolls toward them.
 - Visual direction: colorful environment, polished presentation, and the most realistic-looking character art practical without external paid assets.
+- Graphics-upgrade direction: use a layered PixiJS stage first, then replace character SVGs with richer animated assets in later passes if the direction feels right.
 - Layout rule: the playable area should take the vast majority of the screen.
 - Layout rule: the scene should stay as unobscured as possible, so only compact stats sit inside the stage while status, buttons, and instructions sit directly beneath it.
 
 ## Technical Stack
 
-- Frontend: React + TypeScript.
+- Frontend: React 19 + TypeScript.
 - Tooling: Vite.
 - Package manager: pnpm.
 - Default local dev server: `pnpm dev` on port `3003`.
-- UI approach: custom CSS and SVG art for the game surface; no component library is required for this first playable because the scene is highly bespoke.
+- UI approach: React for HUD and controls, with PixiJS rendering the stage and main in-world actors.
+- Build cache strategy: Vite emits hashed assets, the app exposes a build ID marker, and Vercel serves the HTML entry point with no-store cache headers to reduce stale deploys.
 
 ## Code Structure Rules
 
@@ -29,23 +31,33 @@
 ### Core Scene
 
 - Full-screen leaning side-scroller stage with a fixed player anchor and moving world.
+- Current graphics-upgrade prototype: the stage background, road, lighting, world props, and leash render through PixiJS while the walker, shiba, animated encounter animals, HUD, and status controls remain in React DOM.
 - A continuous route that starts at home, passes through the park gate, and then continues through a randomized order of neighborhood destinations.
 - Route scenery includes the house, lamps, benches, trees, flowers, treat bags, park gates, park fountains, the cafe endpoint, the post office endpoint, the restaurant endpoint, and the pet store endpoint.
 - The first route is intentionally much longer than the initial prototype and now stretches across a fuller neighborhood walk.
 - Parallax-style background layers, moving road markings, and weather overlays.
+- The stage now adds stronger depth cues through softer ground shadows, richer atmospheric light, and slight camera-motion-style drift in the Pixi background layers.
+- Each destination level now swaps to its own broader background treatment so the route visibly changes between a greener park approach, a more urban cafe stretch, a Zurich-like old-town waterfront, a lakefront restaurant segment, and a neighborhood market/pet-store segment.
+- Stroked Pixi arc details now start from explicit local points so landmark arches and the coffee-cup handle do not throw stray diagonal lines from the scene origin.
 
 ### Characters
 
-- Custom SVG walker art.
+- The walker currently uses the stronger legacy SVG silhouette in the DOM layer while the rest of the upgraded stage remains in PixiJS.
 - The walker hair is tuned to a dark orange tone.
 - The walker hair silhouette is slightly extended so it cleanly covers the full top of the head without changing the overall hairstyle.
+- The walker remains clearly female-presenting, with the current haircut and dark orange hair color preserved while the face and coat silhouette are tuned a bit cleaner.
 - Walker arm pivots and sleeve overlap are tuned so the hands stay visually attached to the body through the walk cycle.
-- After passing the cafe, the walker visibly carries a coffee cup until the post office has been reached.
-- After reaching the post office, the walker visibly carries a parcel for the rest of the run.
-- Custom SVG shiba art with more realistic proportions and shading than placeholder shapes.
-- The shiba side profile keeps four visible legs rather than collapsing to a three-leg silhouette.
-- Custom event actor art for cats and passing dogs with more anatomical detail than the initial pass.
-- Passing dogs are rendered as regular neighborhood dogs with a clearer side profile.
+- After completing a destination, the walker now visibly carries a destination-specific item, including flowers after the park, coffee after the cafe, a parcel after the post office, takeout after the restaurant, and a pet-store bag after the pet store.
+- The visible shiba now uses a custom cartoon side-profile SVG in the DOM layer, tuned to read clearly and feel appealing at gameplay size instead of relying on the earlier imported clipart profile.
+- The visible shiba asset is now built from real layered body, head, tail, front-leg, and rear-leg parts so the motion can animate naturally without crop-based fake slices.
+- The shiba presentation adds a visible collar and ring so the leash target reads clearly at the neck.
+- The earlier fake extra leg hints were removed so the profile no longer shows duplicated limbs around the visible character art.
+- The custom shiba keeps the connected ears and cinnamon-roll tail from the intended silhouette while presenting them in a softer cartoon style.
+- Shiba motion is restrained to a slight body bob, gentle tail sway, and one front plus one rear leg swing so the walk reads cleaner at side-scrolling game scale.
+- Cats and passing dogs now render as reusable animated SVG encounter layers above the Pixi stage instead of the older Pixi vector animal passes.
+- Cat event art uses a longer, cleaner feline silhouette with animated legs and now randomly rotates between the classic coat, an orange tabby palette, and a white palette.
+- Passing dog art uses a muted shepherd-like animated profile instead of the earlier simplified cartoon pass.
+- The paused passing-dog pose now sits slightly lower while stopped so the nose-to-nose greeting still reads as a brief sniff before it moves on.
 - Characters face the direction they are currently traveling.
 - Cat art uses a full four-leg run silhouette instead of a simplified two-leg pass.
 - Cat tails are carried upright in the silhouette.
@@ -58,7 +70,7 @@
 - The leash anchor uses fixed mirrored hand and collar landmarks so it stays attached across both facing directions.
 - The leash-holding arm stays steadier and the leash curve leaves the hand in the current facing direction so the line does not peel away from the visible hand during turns.
 - Cats and passing dogs travel on a slightly higher back lane and render behind the walker and shiba.
-- Basic motion loops for walking, tail movement, and running event actors.
+- Walker and shiba motion use shared stride-phase animation driven by gameplay state, while the animated encounter cat and dog art use restrained DOM/SVG bobbing on top of gameplay-driven positioning.
 
 ### Level 1 Mechanics
 
@@ -82,6 +94,7 @@
 - The walk continues straight into the next randomized destination instead of resetting or cutting away.
 - The next destination after the park is randomized each run by shuffling the remaining destination pool.
 - Final win state is at whichever destination ends the current randomized route.
+- Completing a level now triggers a transparent in-stage completion overlay for roughly three seconds before fading back to the normal HUD.
 
 ### Controls
 
@@ -92,6 +105,7 @@
 - Keyboard scream: `Q`.
 - Keyboard restart: `R`.
 - On-screen pull controls are shown as left and right arrow buttons with generic directional labels.
+- Debug-only on-screen `Cat` and `Dog` buttons can manually trigger those encounter events for art and behavior testing.
 - The control copy explains the horizontal pull directions without tying them to only one destination.
 
 ## Current Tuning
@@ -103,6 +117,7 @@
 - Leg animation timing is intentionally slowed down so walking reads more natural and less frantic.
 - Walker and shiba gait timing uses a capped visual-speed mapping so sudden velocity spikes do not cause unnaturally fast leg motion.
 - Walker and shiba gait timing now snaps to a few slow visual gait bands instead of retiming every frame from raw velocity, which prevents occasional bursts of overly fast leg motion.
+- Walker, shiba, and event-animal gait phases are now advanced in game state from ground-relative speed, so limbs freeze cleanly when motion relative to the road stops.
 - Walker and shiba only animate when they are actually moving relative to the ground; if ground motion drops below the idle threshold, their legs, body bob, and idle motion all pause together.
 - Cat events stay on screen long enough to fully run from one side of the play area to the other.
 - The old event legend chips were removed because they read as unclear debug-style labels instead of useful player-facing information.
@@ -128,6 +143,7 @@
 - GitHub Actions deploys every push to Vercel automatically.
 - Pushes to `main` deploy to production.
 - Pushes to other branches deploy preview builds.
+- The production HTML entry point is served with `Cache-Control: no-store, max-age=0, must-revalidate` through `vercel.json`, while hashed assets continue to be cache-safe.
 - Release keyword: whenever the user says `PUBLISH`, it means to commit the current work if needed, push the current branch to the GitHub remote, let the Vercel deployment run, verify the result, and report the live URL back.
 - For production release requests, `PUBLISH` should push the latest work to `main` so `https://miwa-walk.vercel.app` updates.
 - A `PUBLISH` request is not complete until the remote push succeeds and the Vercel deployment status has been checked.

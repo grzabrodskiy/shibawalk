@@ -5,6 +5,7 @@ import {
   createInitialState,
   getMoodSummary,
   getRouteStatus,
+  spawnDebugEvent,
   useScream,
   useTreat,
 } from './game';
@@ -35,6 +36,18 @@ export default function App() {
 
   const handleReset = useCallback(() => {
     setGame(createInitialState(stageWidthRef.current));
+  }, []);
+
+  const handleSpawnCat = useCallback(() => {
+    setGame((current) => spawnDebugEvent(current, stageWidthRef.current, 'cat'));
+  }, []);
+
+  const handleSpawnDog = useCallback(() => {
+    setGame((current) => spawnDebugEvent(current, stageWidthRef.current, 'dog'));
+  }, []);
+
+  const handleSpawnBigDog = useCallback(() => {
+    setGame((current) => spawnDebugEvent(current, stageWidthRef.current, 'bigDog'));
   }, []);
 
   const {
@@ -102,6 +115,9 @@ export default function App() {
         onPullEnd={stopTouchPull}
         onTreat={handleTreat}
         onScream={handleScream}
+        onSpawnCat={handleSpawnCat}
+        onSpawnDog={handleSpawnDog}
+        onSpawnBigDog={handleSpawnBigDog}
         onReset={handleManualReset}
         stageRef={stageRef}
         stageWidth={stageSize.width}

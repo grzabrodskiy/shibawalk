@@ -137,6 +137,18 @@
   box-shadow: 0 10px 20px rgba(170, 57, 46, 0.18);
 }
 
+.action-button--debug-cat {
+  background: rgba(110, 101, 91, 0.16);
+  color: #4a4038;
+  border: 1px solid rgba(98, 87, 76, 0.16);
+}
+
+.action-button--debug-dog {
+  background: rgba(95, 102, 100, 0.16);
+  color: #3e4543;
+  border: 1px solid rgba(78, 88, 84, 0.16);
+}
+
 .action-button--ghost {
   background: rgba(123, 91, 66, 0.18);
   color: #5a4130;

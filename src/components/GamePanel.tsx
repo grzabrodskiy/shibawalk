@@ -1,15 +1,20 @@
-import { CSSProperties, type RefObject, useMemo } from 'react';
+import { type RefObject, useMemo } from 'react';
 import { ShibaArt, WalkerArt } from '../art';
 import {
   PLAYER_SCREEN_RATIO,
   TREAT_VISUAL_DURATION,
-  getDestinationProgress,
+  getCarriedItemForDestination,
 } from '../game';
 import type { Direction, GameState, LevelDefinition, MoodSummary } from '../game';
 import { EventActor, getAnimalEncounterState } from './EventActor';
+import { PixiStageScene } from './PixiStageScene';
+import {
+  getShibaBubblePosition,
+  getShibaCollarAnchor,
+  getWalkerHandAnchor,
+} from './pixiActors';
 import { StageStats } from './StageStats';
 import { StatusPanel } from './StatusPanel';
-import { WorldObject } from './WorldObject';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -28,25 +33,31 @@ function getGaitBand(speed: number) {
   return 0;
 }
 
-function resolveAnchorX(
-  localX: number,
-  viewBoxWidth: number,
-  renderWidth: number,
-  facing: number,
-  naturalFacing: number,
-) {
-  const mirrored = facing !== naturalFacing;
-  const ratio = localX / viewBoxWidth;
-  return renderWidth * (mirrored ? 1 - ratio : ratio);
+function getCarriedItemLabel(destinationKey: LevelDefinition['destinationKey']) {
+  switch (destinationKey) {
+    case 'park':
+      return 'Flowers picked up';
+    case 'cafe':
+      return 'Coffee secured';
+    case 'postOffice':
+      return 'Parcel in hand';
+    case 'restaurant':
+      return 'Takeout acquired';
+    case 'petStore':
+      return 'Pet store bag ready';
+    case 'home':
+    default:
+      return '';
+  }
 }
 
-function resolveAnchorY(localY: number, viewBoxHeight: number, renderHeight: number) {
-  return renderHeight * (localY / viewBoxHeight);
+function isStubbornStreak(game: GameState, moodSummary: MoodSummary) {
+  return (
+    game.activeEvent?.type === 'stubborn' ||
+    moodSummary.title === 'Stubborn streak' ||
+    game.mood.label === 'Stubborn streak'
+  );
 }
-
-const WALKER_LEASH_HAND = { x: 182, y: 206 };
-const SHIBA_COLLAR_ANCHOR = { x: 132, y: 97 };
-const SHIBA_TREAT_TARGET = { x: 34, y: 90 };
 
 interface GamePanelProps {
   game: GameState;
@@ -65,8 +76,11 @@ interface GamePanelProps {
   onPullEnd: () => void;
   onTreat: () => void;
   onScream: () => void;
+  onSpawnCat: () => void;
+  onSpawnDog: () => void;
+  onSpawnBigDog: () => void;
   onReset: () => void;
-  stageRef: RefObject<HTMLDivElement>;
+  stageRef: RefObject<HTMLDivElement | null>;
   stageWidth: number;
   stageHeight: number;
 }
@@ -88,65 +102,77 @@ export function GamePanel({
   onPullEnd,
   onTreat,
   onScream,
+  onSpawnCat,
+  onSpawnDog,
+  onSpawnBigDog,
   onReset,
   stageRef,
   stageWidth,
   stageHeight,
 }: GamePanelProps) {
+  const shibaPullBack = isStubbornStreak(game, moodSummary);
   const worldScale = clamp(stageWidth / 2500, 0.18, 0.42);
   const playerX = clamp(stageWidth * PLAYER_SCREEN_RATIO, 96, 250);
   const shibaX = playerX + clamp(stageWidth * 0.16, 88, 170);
-  const walkerWidth = 220;
-  const walkerHeight = (walkerWidth * 360) / 210;
-  const walkerBottom = 90;
-  const walkerLeft = playerX - walkerWidth / 2;
-  const walkerTop = stageHeight - walkerBottom - walkerHeight;
-  const shibaWidth = 250;
-  const shibaHeight = (shibaWidth * 200) / 280;
-  const shibaBottom = 94;
-  const shibaLeft = shibaX - shibaWidth / 2;
-  const shibaTop = stageHeight - shibaBottom - shibaHeight;
+  const walkerGroundY = stageHeight - 90;
+  const shibaGroundY = stageHeight - 94;
   const visualSpeed = Math.min(Math.abs(game.velocity), 88);
   const gaitBand = getGaitBand(visualSpeed);
   const walkerStride = ['2.18s', '1.98s', '1.84s', '1.7s'][gaitBand];
-  const shibaStride = ['2.02s', '1.84s', '1.7s', '1.56s'][gaitBand];
-  const walkerMoving = visualSpeed > 20;
-  const shibaMoving = visualSpeed > 18;
-  const cafeProgress = getDestinationProgress(game.levels, 'cafe');
-  const postOfficeProgress = getDestinationProgress(game.levels, 'postOffice');
-  const hasParcel =
-    postOfficeProgress !== null && game.furthestProgress >= postOfficeProgress;
-  const hasCoffeeCup =
-    !hasParcel && cafeProgress !== null && game.furthestProgress >= cafeProgress;
+  const shibaStride = ['2.02s', '1.82s', '1.66s', '1.52s'][gaitBand];
+  const walkerMoving = visualSpeed > 16;
+  const shibaMoving = visualSpeed > 14;
+  const walkerGait = clamp((visualSpeed - 12) / 68, 0, 1);
+  const shibaGait = clamp((visualSpeed - 10) / 70, 0, 1);
+  const shibaSceneGait = shibaPullBack ? 0 : shibaGait;
+  const completedLevel =
+    game.lastCompletedLevelIndex > 0 ? game.levels[game.lastCompletedLevelIndex - 1] : null;
+  const carriedItem = getCarriedItemForDestination(completedLevel?.destinationKey);
+  const hasParcel = carriedItem === 'parcel';
+  const hasCoffeeCup = carriedItem === 'coffee';
   const travelFacing = Math.abs(game.velocity) > 8 ? (game.velocity > 0 ? 1 : -1) : game.facing;
   const walkerFacing = travelFacing;
   const shibaFacing = travelFacing;
-  const leashHandX =
-    walkerLeft + resolveAnchorX(WALKER_LEASH_HAND.x, 210, walkerWidth, walkerFacing, 1);
-  const leashHandY = walkerTop + resolveAnchorY(WALKER_LEASH_HAND.y, 360, walkerHeight);
-  const leashHandControlX = leashHandX + walkerFacing * 18;
-  const leashDogX =
-    shibaLeft + resolveAnchorX(SHIBA_COLLAR_ANCHOR.x, 280, shibaWidth, shibaFacing, -1);
-  const leashDogY = shibaTop + resolveAnchorY(SHIBA_COLLAR_ANCHOR.y, 200, shibaHeight);
+  const walkerScene = {
+    x: playerX,
+    groundY: walkerGroundY,
+    facing: walkerFacing,
+    stridePhase: game.walkerStridePhase,
+    gait: walkerGait,
+    rainy: game.activeEvent?.type === 'rain',
+    hasCoffeeCup,
+    hasParcel,
+  } as const;
+  const shibaScene = {
+    x: shibaX,
+    groundY: shibaGroundY,
+    facing: shibaFacing,
+    stridePhase: game.shibaStridePhase,
+    gait: shibaSceneGait,
+    rainy: game.activeEvent?.type === 'rain',
+    pullBack: shibaPullBack,
+  } as const;
+  const leashHand = getWalkerHandAnchor(walkerScene);
+  const leashCollar = getShibaCollarAnchor(shibaScene);
   const treatProgress = clamp(1 - treatVisualTimeLeft / TREAT_VISUAL_DURATION, 0, 1);
   const treatArc = Math.sin(treatProgress * Math.PI) * 28;
-  const treatStartX = leashHandX + walkerFacing * 8;
-  const treatStartY = leashHandY - 8;
-  const treatTargetX =
-    shibaLeft + resolveAnchorX(SHIBA_TREAT_TARGET.x, 280, shibaWidth, shibaFacing, -1);
-  const treatTargetY =
-    shibaTop + resolveAnchorY(SHIBA_TREAT_TARGET.y, 200, shibaHeight);
+  const treatStartX = leashHand.x + walkerFacing * 8;
+  const treatStartY = leashHand.y - 8;
+  const treatTargetX = leashCollar.x + shibaFacing * 36;
+  const treatTargetY = leashCollar.y - 8;
   const treatX = treatStartX + (treatTargetX - treatStartX) * treatProgress;
   const treatY = treatStartY + (treatTargetY - treatStartY) * treatProgress - treatArc;
-  const stageStyle = {
-    ['--camera' as string]: `${game.progress}px`,
-    ['--road-shift' as string]: `${-game.progress * 2.1}px`,
-    ['--cloud-shift' as string]: `${-game.progress * 0.18}px`,
-    ['--hill-shift' as string]: `${-game.progress * 0.11}px`,
-    ['--tree-shift' as string]: `${-game.progress * 0.43}px`,
-  } as CSSProperties;
   const animalEncounter = getAnimalEncounterState(game.activeEvent, stageWidth, shibaX);
-  const showReactionScream = Boolean(animalEncounter?.showCallout);
+  const shibaReactionCallout = screamTimeLeft > 0 ? 'YIP!' : animalEncounter?.shibaCallout ?? null;
+  const shibaBubble = getShibaBubblePosition(shibaScene);
+  const actorScene = {
+    walker: walkerScene,
+    shiba: shibaScene,
+    eventAnimal: null,
+    isPulling,
+    renderWalker: false,
+    renderShiba: false,
+  };
 
   const visibleProps = useMemo(
     () =>
@@ -169,18 +195,18 @@ export function GamePanel({
       <div
         ref={stageRef}
         className={`stage${game.activeEvent?.type === 'rain' ? ' is-raining' : ''}${game.won ? ' is-won' : ''}`}
-        style={stageStyle}
       >
-        <div className="stage__sky" />
-        <div className="stage__hills" />
-        <div className="stage__houses" />
-        <div className="stage__road" />
-        <div className="stage__curb" />
-        <div className="stage__grass" />
-
-        <div className="cloud cloud--1" />
-        <div className="cloud cloud--2" />
-        <div className="cloud cloud--3" />
+        <PixiStageScene
+          stageWidth={stageWidth}
+          stageHeight={stageHeight}
+          progress={game.progress}
+          elapsed={game.elapsed}
+          velocity={game.velocity}
+          activeLevel={routeLevel}
+          isRaining={game.activeEvent?.type === 'rain'}
+          visibleProps={visibleProps}
+          actorScene={actorScene}
+        />
 
         <StageStats
           level={routeLevel}
@@ -191,12 +217,6 @@ export function GamePanel({
           distanceToGoal={distanceToGoal}
         />
 
-        {visibleProps.map(({ prop, x, collected }) => (
-          <WorldObject key={prop.id} prop={prop} x={x} collected={collected} />
-        ))}
-
-        <EventActor event={game.activeEvent} stageWidth={stageWidth} shibaX={shibaX} />
-
         {game.activeEvent?.type === 'rain' && (
           <>
             <div className="rain-overlay rain-overlay--back" />
@@ -204,20 +224,19 @@ export function GamePanel({
           </>
         )}
 
-        <svg
-          className="leash-overlay"
-          viewBox={`0 0 ${Math.max(stageWidth, 960)} ${Math.max(stageHeight, 620)}`}
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <path
-            d={`M ${leashHandX} ${leashHandY} C ${leashHandControlX} ${isPulling ? leashHandY - 10 : leashHandY + 14}, ${leashDogX - 28} ${isPulling ? leashDogY - 18 : leashDogY + 8}, ${leashDogX} ${leashDogY}`}
-            fill="none"
-            stroke={isPulling ? '#cb6a2d' : '#6d513c'}
-            strokeWidth="4.5"
-            strokeLinecap="round"
-          />
-        </svg>
+        {game.levelCompleteTimeLeft > 0 && completedLevel && (
+          <div className="stage-level-complete" aria-live="polite">
+            <div className="stage-level-complete__card">
+              <span className="stage-level-complete__eyebrow">
+                Level {completedLevel.index} Complete
+              </span>
+              <strong>{completedLevel.destinationLabel} reached</strong>
+              <span className="stage-level-complete__subline">
+                {getCarriedItemLabel(completedLevel.destinationKey)}
+              </span>
+            </div>
+          </div>
+        )}
 
         {treatVisualTimeLeft > 0 && (
           <div
@@ -237,23 +256,28 @@ export function GamePanel({
             moving={walkerMoving}
             rainy={game.activeEvent?.type === 'rain'}
             stride={walkerStride}
-            hasCoffeeCup={hasCoffeeCup}
-            hasParcel={hasParcel}
+            carriedItem={carriedItem}
           />
         </div>
 
         <div className="character character--shiba" style={{ left: `${shibaX}px` }}>
           <ShibaArt
             facing={shibaFacing}
-            moving={shibaMoving}
+            moving={shibaMoving && !shibaPullBack}
+            pullBack={shibaPullBack}
             rainy={game.activeEvent?.type === 'rain'}
             stride={shibaStride}
           />
         </div>
 
-        {(screamTimeLeft > 0 || showReactionScream) && (
-          <div className="shiba-scream-bubble" style={{ left: `${shibaX + 8}px`, top: `${shibaTop - 30}px` }}>
-            YIP!
+        <EventActor event={game.activeEvent} stageWidth={stageWidth} shibaX={shibaX} />
+
+        {shibaReactionCallout && (
+          <div
+            className="shiba-scream-bubble"
+            style={{ left: `${shibaBubble.x}px`, top: `${shibaBubble.y}px` }}
+          >
+            {shibaReactionCallout}
           </div>
         )}
 
@@ -274,6 +298,9 @@ export function GamePanel({
         onPullEnd={onPullEnd}
         onTreat={onTreat}
         onScream={onScream}
+        onSpawnCat={onSpawnCat}
+        onSpawnDog={onSpawnDog}
+        onSpawnBigDog={onSpawnBigDog}
         onReset={onReset}
       />
     </section>
